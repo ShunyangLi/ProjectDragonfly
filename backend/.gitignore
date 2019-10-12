@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.flaskenv
+*.pyc
+*.pyo
+env/
+env*
+dist/
+build/
+.cache/
+.pytest_cache/
+.idea/
+/__pycache__/
