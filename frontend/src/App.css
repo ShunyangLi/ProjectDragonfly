@@ -20,3 +20,51 @@
 .App-link {
   color: #09d3ac;
 }
+
+adverb {
+  color: #f2777a;
+}
+
+noun {
+  color: #f99157;
+}
+
+adposition {
+  color: #ffcc66;
+}
+
+determiner {
+  color: #99cc99;
+}
+
+interjection {
+  color: #66cccc;
+}
+
+particle {
+  color: #6699cc;
+}
+
+punctuation {
+  color: #f2f0ec;
+}
+
+verb {
+  color: #cc99cc;
+}
+
+unknown {
+  color: #d3d0c8;
+}
+
+numbers {
+  color: #e8e6df;
+}
+
+conjunction {
+  color: #d27b53;
+}
+
+adjective {
+  color: #6699cc;
+}
