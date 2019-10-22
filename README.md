@@ -12,3 +12,45 @@
 | Zhuowei Gan (Peter) | z5180689 | Product Owner & developer frontend |
 |       Xin Li        | z5203513 |     Developer backend, testing     |
 
+
+
+# How to use highlighter
+
+1. We can define our own HTML tag in css, when the user choose the color then we can change the color dynamic
+
+   ```css
+   verbs {
+       color: red;
+       font-size: 40px;
+   }
+   ```
+
+2. So we solve how to highlight
+
+   ```html
+   <html>
+       <head>
+           <style>
+               verbs {
+                   color: red;
+                   font-size: 40px;
+               }
+           </style>
+       </head>
+   
+       <body>
+           <verbs>
+               Hello world
+           </verbs>
+       </body>
+       <script src="https://code.jquery.com/jquery-3.4.1.js" 
+       integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+       crossorigin="anonymous"></script>
+   
+       <script>
+           $('verbs').css('color','#2ec770');
+       </script>
+   </html>
+   ```
+
+   
