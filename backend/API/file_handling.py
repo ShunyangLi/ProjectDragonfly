@@ -2,8 +2,8 @@
 This is for handling the uploading files
 """
 import os
+from App import app
 from werkzeug.datastructures import FileStorage
-from run import app
 from flask_restplus import Api, reqparse, abort, Resource
 from flask import Flask, jsonify, make_response, request
 
@@ -37,3 +37,5 @@ class Upload(Resource):
             if file and allowed_file(file.filename):
                 filepath = "/".join([target, file.filename])
                 file.save(filepath)
+            else:
+                abort(400, "Files type not allow")
