@@ -46,7 +46,7 @@ import requests
 LicenseCode = 'CC30EA1E-FFB6-46A9-BEC6-7E17749BC7F2'
 UserName = 'CHARLES0812'
 
-RequestUrl = "http://www.ocrwebservice.com/restservices/processDocument?gettext=true";
+RequestUrl = "http://www.ocrwebservice.com/restservices/processDocument?gettext=true&language=chinesesimplified";
 
 FilePath = "test.pdf"
 with open(FilePath, 'rb') as f:
