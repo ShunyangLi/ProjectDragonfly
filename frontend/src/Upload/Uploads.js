@@ -33,7 +33,7 @@ class Uploads extends React.Component{
     render() {
         return (
             <Layout>
-                <Headers />
+                <Headers state="upload"/>
                 <Content style={{ padding: '100px',marginLeft: '350px', width: '700px'}}>
                     <Dragger {...props}>
                         <p className="ant-upload-drag-icon">

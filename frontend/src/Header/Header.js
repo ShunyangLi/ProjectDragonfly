@@ -11,9 +11,16 @@ class Headers extends React.Component{
     state = {
         current: 'home'
     };
+    constructor(props) {
+        super(props);
+        if (props.state) {
+            this.state = {
+                current: props.state
+            }
+        }
+    }
 
     handClick = e => {
-        console.log(e.key);
         this.setState({
             current: e.key
         });
