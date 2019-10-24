@@ -17,22 +17,16 @@ default_text = {
     "info": "Welcome to use this web"
 }
 
-res = mycol.find({}, {default_text})
+res = mycol.find(default_text)
 
 # just insert the default value of database
 if res is None:
     res = mycol.insert_one(default_text)
 
 
-# get the default value the id is 1
-def get_default_tuple():
-    tuple = mycol.find_one({}, {"_id": 1})
-    return tuple['info']
-
-
 # get the tuple according to id
 def get_tuple(id):
-    tuple = mycol.find_one({}, {"_id": id})
+    tuple = mycol.find_one({"_id": int(id)})
     return tuple['info']
 
 

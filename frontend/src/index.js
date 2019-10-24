@@ -3,13 +3,15 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import React from "react";
 import { Route, BrowserRouter as Router } from 'react-router-dom'
-import Headers from "./Header/Header";
-import Uploads from "./Upload/Uploads"
+import Uploads from "./upload/Uploads"
+import Home from "./Home/Home";
+import UploadText from "./UploadText/UploadText";
 
 const routing = (
     <Router>
         <div>
-            <Route exact path="/" component={Headers}/>
+            <Route exact path="/" component={Home}/>
+            <Route path="/info/:id" component={UploadText}/>
             <Route path="/upload" component={Uploads}/>
         </div>
     </Router>

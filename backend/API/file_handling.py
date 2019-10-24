@@ -54,9 +54,10 @@ class Upload(Resource):
         abort(400, 'No files')
 
 
-info = api.namespace('upload', description="Get the info in db")
+info = api.namespace('info', description="Get the info in db")
 @info.route('/', strict_slashes=False)
 class Info(Resource):
+    @info.param('id', "The text id")
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', type=str, required=True)
@@ -68,7 +69,13 @@ class Info(Resource):
 
         text = get_tuple(id)
 
-        token = nltk.word_tokenize(text['info'])
-        res = nltk.pos_tag(token)
+        token = nltk.word_tokenize(text)
+        data = nltk.pos_tag(token)
+        res = []
+        for (word, word_type) in data:
+            res.append({
+                "word": word,
+                "type": word_type
+            })
 
-        return make_response(jsonify({res}), 200)
+        return make_response(jsonify({"res": res}), 200)

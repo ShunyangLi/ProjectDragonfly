@@ -1,0 +1,39 @@
+
+/* the word container */
+.word_container {
+    width: 50%;
+    font-family: monospace;
+    background: #2d2d2d;
+    padding: 15px;
+    color: #f2f0ec;
+    white-space: pre-wrap;
+    line-height: 1.4em;
+    /* white-space: pre; */
+    /* overflow: scroll; */
+    box-sizing: border-box;
+    display: inline-block;
+    contentEditable: true;
+    height: 700px;
+    overflow-y: auto;
+}
+
+/* the whole page container */
+.container {
+    max-width: 960px;
+    margin: 15px auto;
+    contentEditable: true;
+}
+
+/* for the introduction */
+.intro {
+    padding-top: 10px;
+    width: 49%;
+    float: right;
+    padding-left: 20px;
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: top;
+    font-size: 1.1em;
+    font-family: 'Lora', serif;
+}
+

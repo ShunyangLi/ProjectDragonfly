@@ -12,50 +12,51 @@ code {
     monospace;
 }
 
-adverb {
+.Adverb {
   color: #f2777a;
 }
 
-noun {
+.Noun {
   color: #f99157;
 }
 
-adposition {
+.Adposition {
   color: #ffcc66;
 }
 
-determiner {
+.Determiner {
   color: #99cc99;
 }
 
-interjection {
+.Interjection {
   color: #66cccc;
 }
 
-particle {
+.Particle {
   color: #6699cc;
 }
 
-punctuation {
+.Punctuation {
   color: #f2f0ec;
 }
 
-verb {
+.Verb {
   color: #cc99cc;
 }
 
-unknown {
+.Unknown {
   color: #d3d0c8;
 }
 
-numbers {
+.Numbers {
   color: #e8e6df;
 }
 
-conjunction {
+.Conjunction {
   color: #d27b53;
+  
 }
 
-adjective {
+.Adjective {
   color: #6699cc;
 }

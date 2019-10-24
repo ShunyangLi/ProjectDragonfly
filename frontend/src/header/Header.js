@@ -47,11 +47,6 @@ class Headers extends React.Component{
                             <Icon type="upload" />
                             Upload File
                         </Menu.Item>
-
-                        <Menu.Item key="writing">
-                            <Icon type="edit" />
-                            Writing
-                        </Menu.Item>
                     </Menu>
                 </Header>
             </Layout>
