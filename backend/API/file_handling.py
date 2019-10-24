@@ -2,7 +2,10 @@
 This is for handling the uploading files
 """
 import os
-from App import app
+import nltk
+from APP import app
+from util.PDFToText import get_text
+from util.db_handling import *
 from werkzeug.datastructures import FileStorage
 from flask_restplus import Api, reqparse, abort, Resource
 from flask import Flask, jsonify, make_response, request
@@ -35,7 +38,37 @@ class Upload(Resource):
         # check every files uploaded
         for file in files:
             if file and allowed_file(file.filename):
-                filepath = "/".join([target, file.filename])
-                file.save(filepath)
+                text = get_text(file.read())
+                id = generate_id()
+
+                t = {
+                    "_id": id,
+                    "info": text
+                }
+                insert_tuple(t)
+
+                return make_response(jsonify({"id": id}), 200)
             else:
                 abort(400, "Files type not allow")
+
+        abort(400, 'No files')
+
+
+info = api.namespace('upload', description="Get the info in db")
+@info.route('/', strict_slashes=False)
+class Info(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id', type=str, required=True)
+        args = parser.parse_args()
+        id = args.get('id')
+
+        if id is None:
+            abort(400, 'Missing id')
+
+        text = get_tuple(id)
+
+        token = nltk.word_tokenize(text['info'])
+        res = nltk.pos_tag(token)
+
+        return make_response(jsonify({res}), 200)

@@ -1,4 +1,4 @@
-from App import app
+from APP import app
 import API.file_handling
 
 if __name__ == '__main__':
