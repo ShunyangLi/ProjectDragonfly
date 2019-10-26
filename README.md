@@ -12,6 +12,71 @@
 | Zhuowei Gan (Peter) | z5180689 | Product Owner & developer frontend |
 |       Xin Li        | z5203513 |     Developer backend, testing     |
 
+# Development Environment Setup
+
+Clone the repository
+```
+git clone git@github.com:ShunyangLi/ProjectDragonfly.git
+or
+git clone https://github.com/ShunyangLi/ProjectDragonfly.git
+cd ProjectDragonfly/
+```
+
+Install Nodejs v11
+```
+curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+Install npm packages
+```
+cd frontend/
+npm install
+```
+
+Install python venv (virtual environment)
+```
+sudo apt install python3-venv
+```
+
+Create new python venv in project root dir
+```
+cd ../
+python3 -m venv venv
+```
+
+Active new venv
+```
+source venv/bin/activate
+```
+
+Install python modules
+```
+pip install -U flask
+pip install -U flask-cors
+pip install -U requests
+pip install -U nltk
+pip install -U flask_restplus
+pip install -U pymongo
+```
+
+Install mongodb
+```
+sudo apt install mongodb
+```
+
+Run backend
+```
+cd backend/
+python run.py
+```
+
+Run frontend
+```
+cd ../frontend/
+npm start
+```
+
 # The meaning of pos_tag in NLTK
 
 - CC coordinating conjunction
