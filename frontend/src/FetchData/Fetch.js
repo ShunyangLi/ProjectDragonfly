@@ -19,7 +19,6 @@ class GetData extends React.Component{
         };
     }
 
-
     async componentDidMount() {
         const axios = require('axios');
         axios.get('http://127.0.0.1:5000/info/', {
@@ -30,15 +29,18 @@ class GetData extends React.Component{
             this.setState({
                 res: res.data.res
             });
+            console.log(this.state.res[0]);
         }).catch(function (error) {
             console.log(error);
         });
+        
     }
+    
     render() {
         return(
             <div>
                 {this.state.res.map(words => (
-                    <Switch_word key={words.id}{...words} />
+                    <SwitchWord key={words.word} {...words} />
                 ))}
             </div>
         );
@@ -46,29 +48,29 @@ class GetData extends React.Component{
 }
 
 
-const Switch_word = props => {
+const SwitchWord = props => {
     var type = props.type;
     var word = props.word;
 
     switch (type) {
         case (type.match(/^VB*/) || {}).input:
-            return (<font class="Verb">{word} </font>);
+            return (<font className="Verb">{word} </font>);
         case (type.match(/^NN*/) || {}).input:
-            return (<font class="Noun">{word} </font> );
+            return (<font className="Noun">{word} </font> );
         case (type.match(/^RB*/) || {}).input:
-            return (<font class="Adverb">{word} </font>);
+            return (<font className="Adverb">{word} </font>);
         case (type.match(/^DT/) || {}).input:
-            return (<font class="Determiner">{word} </font>);
+            return (<font className="Determiner">{word} </font>);
         case (type.match(/^UH/) || {}).input:
-            return (<font class="Interjection">{word} </font>);
+            return (<font className="Interjection">{word} </font>);
         case (type.match(/^RP/) || {}).input:
-            return (<font class="Particle">{word} </font>);
+            return (<font className="Particle">{word} </font>);
         case (type.match(/^CC/) || {}).input:
-            return (<font class="Conjunction">{word} </font>);
+            return (<font className="Conjunction">{word} </font>);
         case (type.match(/^JJ*/) || {}).input:
-            return (<font class="Adjective">{word} </font>);
+            return (<font className="Adjective">{word} </font>);
         default:
-            return (<font class="Unknown">{word} </font>)
+            return (<font className="Unknown">{word} </font>)
     }
 };
 
