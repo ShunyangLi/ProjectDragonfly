@@ -14,17 +14,16 @@ api = Api(app)
 
 target = 'static/files'
 if not os.path.isdir(target):
-    os.mkdir(target)
-
+    if not os.path.isdir('static'):
+        os.mkdir('static')
+    os.mkdir('static/files')
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
-
 
 # check whether is correct type
 def allowed_file(filename):
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 upload = api.namespace('upload', description="Upload files API")
 @upload.route("/", strict_slashes=False)
@@ -52,7 +51,6 @@ class Upload(Resource):
                 abort(400, "Files type not allow")
 
         abort(400, 'No files')
-
 
 info = api.namespace('info', description="Get the info in db")
 @info.route('/', strict_slashes=False)
