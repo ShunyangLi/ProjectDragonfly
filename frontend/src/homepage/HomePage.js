@@ -494,8 +494,10 @@ const SwitchWord = (props) => {
             return (<span style={{color: color.particle.background}}> {word}</span>);
         case (type.match(/^CC/) || {}).input:
             return (<span style={{color: color.conjunction.background}}> {word}</span>);
-        case (type.match(/^JJ*/) || {}).input:
+        case (type.match(/^JJ*|^PR*/) || {}).input:
             return (<span style={{color: color.adjective.background}}> {word}</span>);
+        case (type.match(/^TO*/) || {}).input:
+            return (<span style={{color: color.adposition.background}}> {word}</span>);
         case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || {}).input:
             return (<span style={{color: color.unknown.background}}>{word}</span>);
         default:
