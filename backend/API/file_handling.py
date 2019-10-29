@@ -61,10 +61,12 @@ class Upload(Resource):
                 text = get_text(file.read())
                 id = generate_id()
 
-                t = {
-                    "_id": id,
-                    "info": text
-                }
+                # t = {
+                #     "_id": id,
+                #     "info": text
+                # }
+                t = get_info(id, text)
+
                 insert_tuple(t)
                 return make_response(jsonify({"id": id}), 200)
             else:
