@@ -12,6 +12,14 @@
 | Zhuowei Gan (Peter) | z5180689 | Product Owner & developer frontend |
 |       Xin Li        | z5203513 |     Developer backend, testing     |
 
+# Team work
+
+- ~~Download as pdf from div (Xin)~~
+- Page & UI change (Peter)
+- ~~Color picker (shunyang li)~~
+- Language picker & upload (Lihuan)
+- Text area highlight (Sam)
+
 # The meaning of pos_tag in NLTK
 
 - CC coordinating conjunction
