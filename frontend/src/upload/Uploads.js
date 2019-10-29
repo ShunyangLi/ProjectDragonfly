@@ -1,7 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import { Layout, Upload, message, Icon } from 'antd';
-import Headers from "../header/Header";
 
 
 const { Content} = Layout;
@@ -43,7 +42,6 @@ class Uploads extends React.Component{
     render() {
         return (
             <Layout>
-                <Headers state="upload"/>
                 <Content style={{marginTop: '20%', marginBottom: '20%', marginLeft: '25%', marginRight: '25%'}}>
                     <button onClick={this.handClick}>Check text</button>
                     <Dragger {...props}>
