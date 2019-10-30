@@ -47,20 +47,25 @@ class Textarea(Resource):
             })
         return make_response(jsonify({"res": res}), 200)
 
+
 upload = api.namespace('upload', description="Upload files API")
 @upload.route("/", strict_slashes=False)
 class Upload(Resource):
+
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('file', location='files', type=FileStorage, required=True, action='append')
+        parser.add_argument('language', type=str)
         args = parser.parse_args()
         files = args.get('file')
+        language = args.get('language')
+
         # check every files uploaded
         for file in files:
             if file and allowed_file(file.filename):
-                text = get_text(file.read())
+                # text = get_text(file.read())
                 id = generate_id()
-
+                text = "Hello world"
                 t = {
                     "_id": id,
                     "info": text
@@ -70,6 +75,7 @@ class Upload(Resource):
             else:
                 abort(400, "Files type not allow")
         abort(400, 'No files')
+
 
 info = api.namespace('info', description="Get the info in db")
 @info.route('/', strict_slashes=False)
