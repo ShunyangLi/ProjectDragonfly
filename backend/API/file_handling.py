@@ -63,15 +63,23 @@ class Upload(Resource):
         # check every files uploaded
         for file in files:
             if file and allowed_file(file.filename):
-                # text = get_text(file.read())
+                text = get_text(file.read())
                 id = generate_id()
-                text = "Hello world"
                 t = {
                     "_id": id,
-                    "info": text
+                    "info": text,
+                    "language": language
                 }
                 insert_tuple(t)
-                return make_response(jsonify({"id": id}), 200)
+                token = nltk.word_tokenize(text)
+                data = nltk.pos_tag(token)
+                res = []
+                for (word, word_type) in data:
+                    res.append({
+                        "word": word,
+                        "type": word_type
+                    })
+                return make_response(jsonify({"res": res}), 200)
             else:
                 abort(400, "Files type not allow")
         abort(400, 'No files')

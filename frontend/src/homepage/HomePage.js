@@ -1,10 +1,15 @@
 import React from 'react';
 import jsPDF from 'jspdf';
+import reqwest from 'reqwest';
 import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
-import { Button} from 'antd';
+import { Button, Modal, Select, Upload, Icon, message } from 'antd';
+
+
+const { Dragger } = Upload;
+const { Option } = Select;
 
 // this is home page, we need contain the highlight part and tools part
 class HomePage extends React.Component {
@@ -116,9 +121,74 @@ class HomePage extends React.Component {
             conjunctionDisplay: false,
             adjectiveDisplay: false,
             displayColorPicker: false,
-            current_id: ''
+            current_id: '',
+            fileList: [],
+            uploading: false,
+            visible: false,
+            confirmLoading: false,
+            select_value: "english"
         }
     }
+
+    // show the upload file modal
+    showModal = () => {
+        this.setState({
+            visible: true,
+        });
+    };
+
+    // this is handle the select value
+    handleSelect = (value) => {
+        this.setState({
+            select_value: value
+        });
+        // console.log(`selected ${value}`);
+    };
+
+    // handle the upload file
+    handleUpload = () => {
+        const { fileList } = this.state;
+        const formData = new FormData();
+        fileList.forEach(file => {
+            formData.append('file', file);
+        });
+
+        formData.append('language', this.state.select_value.toString());
+
+        this.setState({
+            uploading: true,
+        });
+
+        // You can use any AJAX library you like
+        reqwest({
+            url: 'http://127.0.0.1:5000/upload/',
+            method: 'POST',
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            mimeTypes:"multipart/form-data",
+            success: (res) => {
+                console.log(res);
+                this.setState({
+                    fileList: [],
+                    uploading: false,
+                    visible: false,
+                    res: res.res
+                });
+
+                message.success('Your file upload success');
+            },
+            error: () => {
+                this.setState({
+                    uploading: false,
+                });
+                message.error('Your file upload failed.');
+            },
+        });
+    };
+
+
 
     // get the default text in the database
     componentDidMount() {
@@ -214,7 +284,46 @@ class HomePage extends React.Component {
     };
 
 
+    // TODO this is try to handle paste
+    handlePaste = (e) => {
+        // avoid the paste info, because we need to convert
+        e.preventDefault();
+
+        // let content = e.clipboardData.getData('Text');
+        // document.getElementById('words').append(content);
+    };
+
+    handleCloseModal = () => {
+        this.setState({
+            visible: false
+        })
+    };
+
     render() {
+        // this part is about upload
+        const { uploading, fileList } = this.state;
+        const props = {
+            onRemove: file => {
+                this.setState(state => {
+                    const index = state.fileList.indexOf(file);
+                    const newFileList = state.fileList.slice();
+                    newFileList.splice(index, 1);
+                    return {
+                        fileList: newFileList,
+                    };
+                });
+            },
+            beforeUpload: file => {
+                this.setState(state => ({
+                    fileList: [...state.fileList, file],
+                }));
+                return false;
+            },
+            fileList,
+        };
+        const { visible, confirmLoading } = this.state;
+
+        // this is about css
         const styles = reactCSS({
             'default': {
                 adverb: {
@@ -307,6 +416,41 @@ class HomePage extends React.Component {
 
         return (
           <div>
+              {/* upload files */}
+              <Modal
+                  title="Title"
+                  visible={visible}
+                  onOk={this.handleCloseModal}
+                  confirmLoading={confirmLoading}
+                  onCancel={this.handleCloseModal}
+              >
+
+                  <Select defaultValue="english" style={{ width: '100%', marginBottom: '2%' }} onChange={this.handleSelect}>
+                      <Option value="english">english</Option>
+                      <Option value="chinese">chinese</Option>
+                  </Select>
+
+                  <Dragger {...props}>
+                      <p className="ant-upload-drag-icon">
+                          <Icon type="inbox" />
+                      </p>
+                      <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                      <p className="ant-upload-hint">
+                          Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                          band files
+                      </p>
+                  </Dragger>
+                  <Button
+                      size={"large"}
+                      onClick={this.handleUpload}
+                      disabled={fileList.length === 0 }
+                      loading={uploading}
+                      style={{ marginTop: 16, width: '100%' }}
+                  >
+                      {uploading ? 'Uploading' : 'Start Upload'}
+                  </Button>
+              </Modal>
+
               {/* The second part is tools container */}
               <div className="intro">
                   Hello this is the introduction about English highlight.
@@ -456,11 +600,17 @@ class HomePage extends React.Component {
                           Update
                       </Button>
                   </div>
+
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="upload" onClick={this.showModal} size="large">
+                          Update
+                      </Button>
+                  </div>
               </div>
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={false} contentEditable={true} suppressContentEditableWarning={true}  onKeyUp={this.handleEditor}>
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true}  onKeyUp={this.handleEditor}>
                   {this.state.res.map(words => (
                       <SwitchWord key={words.word} {...words} colors={styles} />
                   ))}
