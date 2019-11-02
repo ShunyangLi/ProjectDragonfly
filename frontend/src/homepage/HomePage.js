@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import jsPDF from 'jspdf';
 import reqwest from 'reqwest';
 import reactCSS from 'reactcss';
@@ -188,10 +189,17 @@ class HomePage extends React.Component {
         });
     };
 
-
+    // this function clears the textfield
+    clearTextField() {
+        document.getElementById('words').innerText = "";
+        this.setState({
+            text_input: ""
+        });
+    };
 
     // get the default text in the database
     componentDidMount() {
+        this._isMounted = true;
         const axios = require('axios');
         axios.get('http://127.0.0.1:5000/info/', {
             params: {
@@ -205,7 +213,11 @@ class HomePage extends React.Component {
             console.log(error);
         });
     };
-
+    
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+        
     // this is for handle open the color picker
     handleClick = (e) => {
         let id = e.target.id;
@@ -239,35 +251,62 @@ class HomePage extends React.Component {
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        console.log(document.getElementById('words').innerText);
-        this.setState({
-            text_input: e.currentTarget.textContent
-        })
+        
+    };
+    
+    handleTextClick = (e) => {
+        //console.log(document.getElementById('words').innerText);
+        //console.log(e.currentTarget.textContent);
+        //if (this._unchanged == true) {
+        if (1 == 2) {
+            console.log("wow");
+            this._unchanged = false;
+            let html_input = document.getElementById('words').innerHTML;
+            console.log(html_input);
+            let input_text = html_input.replace(/<[^>]*>?/gm, '');
+            console.log(input_text);
+            this.setState({
+                text_input: input_text,
+                res: []
+            });
+            this.forceUpdate();
+        }
+        
     };
 
-    // TODO this is sam's update functions
-    handleUpdate = (props) => {
-        // send the text to backend!
-        //alert(this.state.text_input);
-        this.setState({
-            res: []
-        });
-        const axios = require('axios');
-        axios.get('http://127.0.0.1:5000/textarea/', {
+    async getText(input_text) {
+        return axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
-                "text": this.state.text_input
+                "text": input_text
             }
         }).then(res => {
-            this.setState({
-                res: res.data.res
-            });
+           this.state.res = res.data.res;
         }).catch(function (error) {
             console.log(error);
         });
+    }
 
+    // TODO this is sam's update functions
+    handleUpdate = async event => {
+        // send the text to backend!
         this.setState({
-            text_input: ""
+            text_input: "",
+            res: []
         })
+        // save the text
+        //var input_text = document.getElementById('words').innerText;
+        let html_input = document.getElementById('words').innerHTML;
+        let input_text = html_input.replace(/<[^>]*>?/gm, '');
+        // clear the text
+        //document.getElementById('words').innerText = "";
+        const promise = await this.getText(input_text);
+        await promise;
+        //this.setState({ state: this.state });
+        if (document.getElementById('words') != null) {
+            document.getElementById('words').innerText = "";
+            this.forceUpdate();
+        }
+        
     };
 
     // this is handle download
@@ -283,16 +322,19 @@ class HomePage extends React.Component {
             });
     };
 
+    generateKey = (pre) => {
+        return `${ pre }_${ new Date().getTime() }`;
+    }
 
     // TODO this is try to handle paste
     handlePaste = (e) => {
         // avoid the paste info, because we need to convert
-        e.preventDefault();
+       //e.preventDefault();
 
         // let content = e.clipboardData.getData('Text');
         // document.getElementById('words').append(content);
     };
-
+    
     handleCloseModal = () => {
         this.setState({
             visible: false
@@ -596,30 +638,30 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Button disabled={this.state.text_input === ""} style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="edit" onClick={this.handleUpdate} size="large">
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="edit" onClick={this.handleUpdate} size="large">
                           Update
                       </Button>
                   </div>
 
                   <div>
                       <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="upload" onClick={this.showModal} size="large">
-                          Update
+                          Upload
                       </Button>
                   </div>
               </div>
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true}  onKeyUp={this.handleEditor}>
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseEnter={this.handleTextClick} >
                   {this.state.res.map(words => (
-                      <SwitchWord key={words.word} {...words} colors={styles} />
-                  ))}
+                      <SwitchWord key={words.word} {...words} colors={styles}/>))}
               </div>
           </div>
         );
     }
 
 }
+
 
 
 // this is switch the word type and color
