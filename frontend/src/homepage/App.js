@@ -1,28 +1,24 @@
-import React from 'react';
+import React from "react";
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import reqwest from 'reqwest';
 import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
-import Uploader from '../components/Uploader'
 import { SketchPicker } from 'react-color';
 import { Button, Modal, Select, Upload, Icon, message } from 'antd';
-
+import Uploader from "../components/Uploader";
 const { Dragger } = Upload;
 const { Option } = Select;
 
 // this is home page, we need contain the highlight part and tools part
-class HomePage extends React.Component {
-
+class App extends React.Component {
     constructor(props) {
         super(props);
         // now need to into the state then pass them into other two part
         this.state = {
             id: 1,
-            res: [],
             text_input: "",
-            email: "",
             adverb: {
                 color: {
                     r: '242',
@@ -124,73 +120,34 @@ class HomePage extends React.Component {
             adjectiveDisplay: false,
             displayColorPicker: false,
             current_id: '',
-            fileList: [],
-            uploading: false,
+            res:[],
             visible: false,
-            confirmLoading: false,
-            select_value: "english"
         }
     }
 
-    // show the upload file modal
-    showModal = () => {
+    // this function clears the textfield
+    clearTextField() {
+        document.getElementById('words').innerText = "";
         this.setState({
-            visible: true,
+            text_input: ""
         });
     };
 
-    // this is handle the select value
-    handleSelect = (value) => {
-        this.setState({
-            select_value: value
-        });
-    };
-
-    // handle the upload file
-    handleUpload = () => {
-        const { fileList } = this.state;
-        const formData = new FormData();
-        fileList.forEach(file => {
-            formData.append('file', file);
-        });
-
-        formData.append('language', this.state.select_value.toString());
-
-        this.setState({
-            uploading: true,
-        });
-
-        // You can use any AJAX library you like
-        reqwest({
-            url: 'http://127.0.0.1:5000/upload/',
-            method: 'POST',
-            data: formData,
-            contentType: false,
-            cache: false,
-            processData: false,
-            mimeTypes:"multipart/form-data",
-            success: (res) => {
-                console.log(res);
-                this.setState({
-                    fileList: [],
-                    uploading: false,
-                    visible: false,
-                    res: res.res
-                });
-
-                message.success('Your file upload success');
-            },
-            error: () => {
-                this.setState({
-                    uploading: false,
-                });
-                message.error('Your file upload failed.');
-            },
-        });
-    };
-
+    // get the default text in the database
     componentDidMount() {
         this._isMounted = true;
+        const axios = require('axios');
+        axios.get('http://127.0.0.1:5000/info/', {
+            params: {
+                "id": this.state.id
+            }
+        }).then(res => {
+            this.setState({
+                res: res.data.res
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
     };
     
     componentWillUnmount() {
@@ -200,7 +157,6 @@ class HomePage extends React.Component {
     // this is for handle open the color picker
     handleClick = (e) => {
         let id = e.target.id;
-        console.log(id);
         id += 'Display';
         this.setState({
             [id]: !this.state.displayColorPicker,
@@ -228,84 +184,65 @@ class HomePage extends React.Component {
             }
         })
     };
-    
-    sendEmail = () => {
-        const input = document.getElementById('words');
-        html2canvas(input)
-            .then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF();
-                pdf.addImage(imgData, 'JPEG', 0, 0);
-                pdf.save("download.pdf");
-            });
-    }
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        // ctrl + a
-        if (e.keyCode===65 && e.ctrlKey) {
-            
-        }
-        this.setState({
-            res: []
-        });
-        this.forceUpdate();
+        
     };
-    
-    handleDown = (e) => {
-        this.setState({
-            res: []
-        });
-        this.forceUpdate();
-    };
-    
     
     handleTextClick = (e) => {
-        if (this.justclicked === true) {
-            this.justclicked = false;
+        //console.log(document.getElementById('words').innerText);
+        //console.log(e.currentTarget.textContent);
+        //if (this._unchanged == true) {
+        if (1 == 2) {
+            console.log("wow");
+            this._unchanged = false;
             let html_input = document.getElementById('words').innerHTML;
+            console.log(html_input);
             let input_text = html_input.replace(/<[^>]*>?/gm, '');
+            console.log(input_text);
             this.setState({
                 text_input: input_text,
                 res: []
             });
             this.forceUpdate();
         }
-
+        
     };
 
-    getText = (input_text) => {
+    async getText(input_text) {
         return axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
                 "text": input_text
             }
         }).then(res => {
-           this.setState({
-                res: res.data.res
-           });
+           this.state.res = res.data.res;
         }).catch(function (error) {
             console.log(error);
         });
-    };
+    }
 
     // TODO this is sam's update functions
-    handleUpdate = () => {
-        this.justclicked = true;
+    handleUpdate = async event => {
+        // send the text to backend!
+        this.setState({
+            text_input: "",
+            res: []
+        })
         // save the text
         //var input_text = document.getElementById('words').innerText;
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
         // clear the text
-        if (input_text === "") {
-            console.log("here");
-            this.setState({
-                text_input: " "
-            });
-            input_text = " ";
+        //document.getElementById('words').innerText = "";
+        const promise = await this.getText(input_text);
+        await promise;
+        //this.setState({ state: this.state });
+        if (document.getElementById('words') != null) {
+            document.getElementById('words').innerText = "";
+            this.forceUpdate();
         }
-        this.getText(input_text);
-        console.log(this);
-        this.setState({ key: Math.random() });
+        
     };
 
     // this is handle download
@@ -321,55 +258,30 @@ class HomePage extends React.Component {
             });
     };
 
+    generateKey = (pre) => {
+        return `${ pre }_${ new Date().getTime() }`;
+    }
+
     // TODO this is try to handle paste
     handlePaste = (e) => {
         // avoid the paste info, because we need to convert
-        e.preventDefault();
-        let content = e.clipboardData.getData('Text');
-        let html_input = document.getElementById('words').innerHTML;
-        let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
-        this.setState({
-            text_input: input_text,
-            res: []
-        })
-        this.forceUpdate();
-    };
-    
-    handleCloseModal = () => {
-        this.setState({
-            visible: false
-        })
-    };
-    
-    handleEmailChange(event) {  
-        this.setState({email: event.target.value})
-        //console.log(this.state.email);
-    }
+       //e.preventDefault();
 
+        // let content = e.clipboardData.getData('Text');
+        // document.getElementById('words').append(content);
+    };
+    handleRes = (res) =>{
+      this.setState({res : res})
+    }
+    showModal = () => {
+        this.setState({visible:true});
+      };
+    handleCloseModal = () => {
+        console.log("closing");
+        this.setState({visible:false})
+    };
     render() {
         // this part is about upload
-        const { uploading, fileList } = this.state;
-        const props = {
-            onRemove: file => {
-                this.setState(state => {
-                    const index = state.fileList.indexOf(file);
-                    const newFileList = state.fileList.slice();
-                    newFileList.splice(index, 1);
-                    return {
-                        fileList: newFileList,
-                    };
-                });
-            },
-            beforeUpload: file => {
-                this.setState(state => ({
-                    fileList: [...state.fileList, file],
-                }));
-                return false;
-            },
-            fileList,
-        };
-        const { visible, confirmLoading } = this.state;
-
         // this is about css
         const styles = reactCSS({
             'default': {
@@ -464,41 +376,8 @@ class HomePage extends React.Component {
         return (
           <div>
               {/* upload files */}
-              <Uploader/>
-              <Modal
-                  title="Title"
-                  visible={visible}
-                  onOk={this.handleCloseModal}
-                  confirmLoading={confirmLoading}
-                  onCancel={this.handleCloseModal}
-              >
-
-                  <Select defaultValue="english" style={{ width: '100%', marginBottom: '2%' }} onChange={this.handleSelect}>
-                      <Option value="english">english</Option>
-                      <Option value="chinese">chinese</Option>
-                  </Select>
-
-                  <Dragger {...props}>
-                      <p className="ant-upload-drag-icon">
-                          <Icon type="inbox" />
-                      </p>
-                      <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                      <p className="ant-upload-hint">
-                          Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                          band files
-                      </p>
-                  </Dragger>
-                  <Button
-                      size={"large"}
-                      onClick={this.handleUpload}
-                      disabled={fileList.length === 0 }
-                      loading={uploading}
-                      style={{ marginTop: 16, width: '100%' }}
-                  >
-                      {uploading ? 'Uploading' : 'Start Upload'}
-                  </Button>
-              </Modal>
-
+              <Uploader handleRes = {this.handleRes} handleCloseModal={this.handleCloseModal} visible = {this.state.visible}/>
+              
               {/* The second part is tools container */}
               <div className="intro">
                   Hello this is the introduction about English highlight.
@@ -511,7 +390,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.adverb.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adverb</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>adverb</font>
                   </div>
 
                   {/* noun */}
@@ -526,8 +405,17 @@ class HomePage extends React.Component {
                       <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Noun</font>
                   </div>
 
-                  {/* adposition */ } 
-                  
+                  {/*/!* adposition *!/*/}
+                  <div>
+                      <div style={ styles.swatch } onClick={ this.handleClick }>
+                          <div style={ styles.adposition } id="adposition"/>
+                      </div>
+                      { this.state.adpositionDisplay ? <div style={ styles.popover }>
+                          <div style={ styles.cover } onClick={ this.handleClose }/>
+                          <SketchPicker color={ this.state.adposition.color } onChange={ this.handleChange } />
+                      </div> : null }
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adposition</font>
+                  </div>
 
                   {/*/!* determiner *!/*/}
                   <div>
@@ -538,7 +426,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.determiner.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Determiner</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>determiner</font>
                   </div>
 
 
@@ -645,26 +533,13 @@ class HomePage extends React.Component {
                           Upload
                       </Button>
                   </div>
-                  
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="arrow-right" onClick={this.sendEmail} size="large">
-                          Email
-                      </Button>
-                      <input type="text" name="email" value={this.state.email} 
-                        onChange={this.handleEmailChange.bind(this)}/>
-                  </div>
-                  
               </div>
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onKeyDown={this.handleDown} onMouseEnter={this.handleTextClick} >
-                  {this.justclicked &&
-                    this.state.res.map(words => (
-                      <SwitchWord key={words.word} {...words} colors={styles}/>))
-                    }
-                  {!this.justclicked &&
-                    this.state.text_input}
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseEnter={this.handleTextClick} >
+                  {this.state.res.map(words => (
+                      <SwitchWord key={words.word} {...words} colors={styles}/>))}
               </div>
           </div>
         );
@@ -705,5 +580,5 @@ const SwitchWord = (props) => {
     }
 };
 
+export default App;
 
-export default HomePage;
