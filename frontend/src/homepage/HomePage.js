@@ -5,7 +5,6 @@ import reqwest from 'reqwest';
 import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
-import Uploader from '../components/Uploader'
 import { SketchPicker } from 'react-color';
 import { Button, Modal, Select, Upload, Icon, message } from 'antd';
 
@@ -464,7 +463,6 @@ class HomePage extends React.Component {
         return (
           <div>
               {/* upload files */}
-              <Uploader/>
               <Modal
                   title="Title"
                   visible={visible}
