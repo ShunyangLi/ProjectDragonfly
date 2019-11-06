@@ -4,14 +4,11 @@ import { Button, Modal, Select, Upload, Icon, message } from "antd";
 const { Dragger } = Upload;
 const { Option } = Select;
 
-export const Uploader = prop => {
-  const [visible, setVisible] = useState(false);
-  const handleCloseModal = () => setVisible(false);
+const Uploader = prop => {
   const [confirmLoading, setconfirmLoading] = useState(false);
   const [select_value, setSelectValue] = useState("english");
   const [fileList, setfileList] = useState([]);
-  const [uploading, setUploading] = useState(true);
-  const [res, setRes] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const props = {
     onRemove: file => {
       const index = fileList.indexOf(file);
@@ -46,8 +43,8 @@ export const Uploader = prop => {
         console.log(res);
         setfileList([]);
         setUploading(false);
-        setVisible(false);
-        props.handleRes(res.res);
+        prop.handleCloseModal();
+        prop.handleRes(res.res);
         message.success("Your file upload success");
       },
       error: () => {
@@ -59,18 +56,13 @@ export const Uploader = prop => {
   const handleSelect = value => {
     setSelectValue(value);
   };
-
-  const showModal = () => {
-    setVisible(true);
-  };
-
   return (
     <Modal
       title="Title"
-      visible={visible}
-      onOk={handleCloseModal}
+      visible={prop.visible}
+      onOk={prop.handleCloseModal}
       confirmLoading={confirmLoading}
-      onCancel={handleCloseModal}
+      onCancel={prop.handleCloseModal}
     >
       <Select
         defaultValue="english"
@@ -105,3 +97,4 @@ export const Uploader = prop => {
     </Modal>
   );
 };
+export default Uploader;

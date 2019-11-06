@@ -1,6 +1,4 @@
-import react from "React";
-
-import React from 'react';
+import React from "react";
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import reqwest from 'reqwest';
@@ -9,7 +7,7 @@ import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
 import { Button, Modal, Select, Upload, Icon, message } from 'antd';
-import { Uploader } from "./components/Uploader";
+import Uploader from "../components/Uploader";
 const { Dragger } = Upload;
 const { Option } = Select;
 
@@ -123,6 +121,7 @@ class App extends React.Component {
             displayColorPicker: false,
             current_id: '',
             res:[],
+            visible: false,
         }
     }
 
@@ -271,10 +270,16 @@ class App extends React.Component {
         // let content = e.clipboardData.getData('Text');
         // document.getElementById('words').append(content);
     };
-    
     handleRes = (res) =>{
       this.setState({res : res})
     }
+    showModal = () => {
+        this.setState({visible:true});
+      };
+    handleCloseModal = () => {
+        console.log("closing");
+        this.setState({visible:false})
+    };
     render() {
         // this part is about upload
         // this is about css
@@ -371,7 +376,7 @@ class App extends React.Component {
         return (
           <div>
               {/* upload files */}
-              <Uploader onUpload = {this.handleRes}/>
+              <Uploader handleRes = {this.handleRes} handleCloseModal={this.handleCloseModal} visible = {this.state.visible}/>
               
               {/* The second part is tools container */}
               <div className="intro">
@@ -574,7 +579,6 @@ const SwitchWord = (props) => {
             return (<span style={{color: color.unknown.background}}> {word}</span>)
     }
 };
-
 
 export default App;
 
