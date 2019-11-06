@@ -1,3 +1,5 @@
+import react from "React";
+
 import React from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
@@ -7,19 +9,17 @@ import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
 import { Button, Modal, Select, Upload, Icon, message } from 'antd';
-
+import { Uploader } from "./components/Uploader";
 const { Dragger } = Upload;
 const { Option } = Select;
 
 // this is home page, we need contain the highlight part and tools part
-class HomePage extends React.Component {
-
+class App extends React.Component {
     constructor(props) {
         super(props);
         // now need to into the state then pass them into other two part
         this.state = {
             id: 1,
-            res: [],
             text_input: "",
             adverb: {
                 color: {
@@ -122,71 +122,9 @@ class HomePage extends React.Component {
             adjectiveDisplay: false,
             displayColorPicker: false,
             current_id: '',
-            fileList: [],
-            uploading: false,
-            visible: false,
-            confirmLoading: false,
-            select_value: "english"
+            res:[],
         }
     }
-
-    // show the upload file modal
-    showModal = () => {
-        this.setState({
-            visible: true,
-        });
-    };
-
-    // this is handle the select value
-    handleSelect = (value) => {
-        this.setState({
-            select_value: value
-        });
-        // console.log(`selected ${value}`);
-    };
-
-    // handle the upload file
-    handleUpload = () => {
-        const { fileList } = this.state;
-        const formData = new FormData();
-        fileList.forEach(file => {
-            formData.append('file', file);
-        });
-
-        formData.append('language', this.state.select_value.toString());
-
-        this.setState({
-            uploading: true,
-        });
-
-        // You can use any AJAX library you like
-        reqwest({
-            url: 'http://127.0.0.1:5000/upload/',
-            method: 'POST',
-            data: formData,
-            contentType: false,
-            cache: false,
-            processData: false,
-            mimeTypes:"multipart/form-data",
-            success: (res) => {
-                console.log(res);
-                this.setState({
-                    fileList: [],
-                    uploading: false,
-                    visible: false,
-                    res: res.res
-                });
-
-                message.success('Your file upload success');
-            },
-            error: () => {
-                this.setState({
-                    uploading: false,
-                });
-                message.error('Your file upload failed.');
-            },
-        });
-    };
 
     // this function clears the textfield
     clearTextField() {
@@ -334,36 +272,11 @@ class HomePage extends React.Component {
         // document.getElementById('words').append(content);
     };
     
-    handleCloseModal = () => {
-        this.setState({
-            visible: false
-        })
-    };
-
+    handleRes = (res) =>{
+      this.setState({res : res})
+    }
     render() {
         // this part is about upload
-        const { uploading, fileList } = this.state;
-        const props = {
-            onRemove: file => {
-                this.setState(state => {
-                    const index = state.fileList.indexOf(file);
-                    const newFileList = state.fileList.slice();
-                    newFileList.splice(index, 1);
-                    return {
-                        fileList: newFileList,
-                    };
-                });
-            },
-            beforeUpload: file => {
-                this.setState(state => ({
-                    fileList: [...state.fileList, file],
-                }));
-                return false;
-            },
-            fileList,
-        };
-        const { visible, confirmLoading } = this.state;
-
         // this is about css
         const styles = reactCSS({
             'default': {
@@ -458,40 +371,8 @@ class HomePage extends React.Component {
         return (
           <div>
               {/* upload files */}
-              <Modal
-                  title="Title"
-                  visible={visible}
-                  onOk={this.handleCloseModal}
-                  confirmLoading={confirmLoading}
-                  onCancel={this.handleCloseModal}
-              >
-
-                  <Select defaultValue="english" style={{ width: '100%', marginBottom: '2%' }} onChange={this.handleSelect}>
-                      <Option value="english">english</Option>
-                      <Option value="chinese">chinese</Option>
-                  </Select>
-
-                  <Dragger {...props}>
-                      <p className="ant-upload-drag-icon">
-                          <Icon type="inbox" />
-                      </p>
-                      <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                      <p className="ant-upload-hint">
-                          Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                          band files
-                      </p>
-                  </Dragger>
-                  <Button
-                      size={"large"}
-                      onClick={this.handleUpload}
-                      disabled={fileList.length === 0 }
-                      loading={uploading}
-                      style={{ marginTop: 16, width: '100%' }}
-                  >
-                      {uploading ? 'Uploading' : 'Start Upload'}
-                  </Button>
-              </Modal>
-
+              <Uploader onUpload = {this.handleRes}/>
+              
               {/* The second part is tools container */}
               <div className="intro">
                   Hello this is the introduction about English highlight.
@@ -695,4 +576,5 @@ const SwitchWord = (props) => {
 };
 
 
-export default HomePage;
+export default App;
+
