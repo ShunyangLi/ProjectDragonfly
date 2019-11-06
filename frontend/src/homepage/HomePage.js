@@ -251,27 +251,28 @@ class HomePage extends React.Component {
 
     // this function is handle the input in div
     handleEditor = (e) => {
+        // ctrl + a
+        if (e.keyCode===65 && e.ctrlKey) {
+            
+        }
+    };
+    
+    handleDown = (e) => {
         
     };
     
     handleTextClick = (e) => {
-        //console.log(document.getElementById('words').innerText);
-        //console.log(e.currentTarget.textContent);
-        //if (this._unchanged == true) {
-        if (1 == 2) {
-            console.log("wow");
-            this._unchanged = false;
+        if (this.justclicked === true) {
+            this.justclicked = false;
             let html_input = document.getElementById('words').innerHTML;
-            console.log(html_input);
             let input_text = html_input.replace(/<[^>]*>?/gm, '');
-            console.log(input_text);
             this.setState({
                 text_input: input_text,
                 res: []
             });
             this.forceUpdate();
         }
-        
+
     };
 
     async getText(input_text) {
@@ -280,33 +281,31 @@ class HomePage extends React.Component {
                 "text": input_text
             }
         }).then(res => {
-           this.state.res = res.data.res;
+           this.setState({
+                res: res.data.res
+           });
         }).catch(function (error) {
             console.log(error);
         });
-    }
+    };
 
     // TODO this is sam's update functions
     handleUpdate = async event => {
-        // send the text to backend!
-        this.setState({
-            text_input: "",
-            res: []
-        })
+        this.justclicked = true;
         // save the text
         //var input_text = document.getElementById('words').innerText;
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
         // clear the text
-        //document.getElementById('words').innerText = "";
+        if (input_text === "") {
+            this.setState({
+                text_input: " "
+            });
+        }
         const promise = await this.getText(input_text);
         await promise;
-        //this.setState({ state: this.state });
-        if (document.getElementById('words') != null) {
-            document.getElementById('words').innerText = "";
-            this.forceUpdate();
-        }
-        
+        console.log(this);
+        this.setState({ key: Math.random() });
     };
 
     // this is handle download
@@ -322,17 +321,18 @@ class HomePage extends React.Component {
             });
     };
 
-    generateKey = (pre) => {
-        return `${ pre }_${ new Date().getTime() }`;
-    }
-
     // TODO this is try to handle paste
     handlePaste = (e) => {
         // avoid the paste info, because we need to convert
-       //e.preventDefault();
-
-        // let content = e.clipboardData.getData('Text');
-        // document.getElementById('words').append(content);
+        e.preventDefault();
+        let content = e.clipboardData.getData('Text');
+        let html_input = document.getElementById('words').innerHTML;
+        let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
+        this.setState({
+            text_input: input_text,
+            res: []
+        })
+        this.forceUpdate();
     };
     
     handleCloseModal = () => {
@@ -652,9 +652,12 @@ class HomePage extends React.Component {
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseEnter={this.handleTextClick} >
-                  {this.state.res.map(words => (
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onKeyDown={this.handleDown} onMouseEnter={this.handleTextClick} >
+                  {this.justclicked &&
+                    this.state.res.map(words => (
                       <SwitchWord key={words.word} {...words} colors={styles}/>))}
+                  {!this.justclicked &&
+                    this.state.text_input}
               </div>
           </div>
         );
