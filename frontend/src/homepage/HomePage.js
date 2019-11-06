@@ -22,6 +22,7 @@ class HomePage extends React.Component {
             id: 1,
             res: [],
             text_input: "",
+            email: "",
             adverb: {
                 color: {
                     r: '242',
@@ -143,7 +144,6 @@ class HomePage extends React.Component {
         this.setState({
             select_value: value
         });
-        // console.log(`selected ${value}`);
     };
 
     // handle the upload file
@@ -189,29 +189,8 @@ class HomePage extends React.Component {
         });
     };
 
-    // this function clears the textfield
-    clearTextField() {
-        document.getElementById('words').innerText = "";
-        this.setState({
-            text_input: ""
-        });
-    };
-
-    // get the default text in the database
     componentDidMount() {
         this._isMounted = true;
-        const axios = require('axios');
-        axios.get('http://127.0.0.1:5000/info/', {
-            params: {
-                "id": this.state.id
-            }
-        }).then(res => {
-            this.setState({
-                res: res.data.res
-            });
-        }).catch(function (error) {
-            console.log(error);
-        });
     };
     
     componentWillUnmount() {
@@ -221,6 +200,7 @@ class HomePage extends React.Component {
     // this is for handle open the color picker
     handleClick = (e) => {
         let id = e.target.id;
+        console.log(id);
         id += 'Display';
         this.setState({
             [id]: !this.state.displayColorPicker,
@@ -248,65 +228,84 @@ class HomePage extends React.Component {
             }
         })
     };
+    
+    sendEmail = () => {
+        const input = document.getElementById('words');
+        html2canvas(input)
+            .then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                pdf.addImage(imgData, 'JPEG', 0, 0);
+                pdf.save("download.pdf");
+            });
+    }
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        
+        // ctrl + a
+        if (e.keyCode===65 && e.ctrlKey) {
+            
+        }
+        this.setState({
+            res: []
+        });
+        this.forceUpdate();
     };
     
+    handleDown = (e) => {
+        this.setState({
+            res: []
+        });
+        this.forceUpdate();
+    };
+    
+    
     handleTextClick = (e) => {
-        //console.log(document.getElementById('words').innerText);
-        //console.log(e.currentTarget.textContent);
-        //if (this._unchanged == true) {
-        if (1 == 2) {
-            console.log("wow");
-            this._unchanged = false;
+        if (this.justclicked === true) {
+            this.justclicked = false;
             let html_input = document.getElementById('words').innerHTML;
-            console.log(html_input);
             let input_text = html_input.replace(/<[^>]*>?/gm, '');
-            console.log(input_text);
             this.setState({
                 text_input: input_text,
                 res: []
             });
             this.forceUpdate();
         }
-        
+
     };
 
-    async getText(input_text) {
+    getText = (input_text) => {
         return axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
                 "text": input_text
             }
         }).then(res => {
-           this.state.res = res.data.res;
+           this.setState({
+                res: res.data.res
+           });
         }).catch(function (error) {
             console.log(error);
         });
-    }
+    };
 
     // TODO this is sam's update functions
-    handleUpdate = async event => {
-        // send the text to backend!
-        this.setState({
-            text_input: "",
-            res: []
-        })
+    handleUpdate = () => {
+        this.justclicked = true;
         // save the text
         //var input_text = document.getElementById('words').innerText;
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
         // clear the text
-        //document.getElementById('words').innerText = "";
-        const promise = await this.getText(input_text);
-        await promise;
-        //this.setState({ state: this.state });
-        if (document.getElementById('words') != null) {
-            document.getElementById('words').innerText = "";
-            this.forceUpdate();
+        if (input_text === "") {
+            console.log("here");
+            this.setState({
+                text_input: " "
+            });
+            input_text = " ";
         }
-        
+        this.getText(input_text);
+        console.log(this);
+        this.setState({ key: Math.random() });
     };
 
     // this is handle download
@@ -322,17 +321,18 @@ class HomePage extends React.Component {
             });
     };
 
-    generateKey = (pre) => {
-        return `${ pre }_${ new Date().getTime() }`;
-    }
-
     // TODO this is try to handle paste
     handlePaste = (e) => {
         // avoid the paste info, because we need to convert
-       //e.preventDefault();
-
-        // let content = e.clipboardData.getData('Text');
-        // document.getElementById('words').append(content);
+        e.preventDefault();
+        let content = e.clipboardData.getData('Text');
+        let html_input = document.getElementById('words').innerHTML;
+        let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
+        this.setState({
+            text_input: input_text,
+            res: []
+        })
+        this.forceUpdate();
     };
     
     handleCloseModal = () => {
@@ -340,6 +340,11 @@ class HomePage extends React.Component {
             visible: false
         })
     };
+    
+    handleEmailChange(event) {  
+        this.setState({email: event.target.value})
+        //console.log(this.state.email);
+    }
 
     render() {
         // this part is about upload
@@ -506,7 +511,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.adverb.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>adverb</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adverb</font>
                   </div>
 
                   {/* noun */}
@@ -521,17 +526,8 @@ class HomePage extends React.Component {
                       <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Noun</font>
                   </div>
 
-                  {/*/!* adposition *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.adposition } id="adposition"/>
-                      </div>
-                      { this.state.adpositionDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.adposition.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adposition</font>
-                  </div>
+                  {/* adposition */ } 
+                  
 
                   {/*/!* determiner *!/*/}
                   <div>
@@ -542,7 +538,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.determiner.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>determiner</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Determiner</font>
                   </div>
 
 
@@ -649,13 +645,26 @@ class HomePage extends React.Component {
                           Upload
                       </Button>
                   </div>
+                  
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="arrow-right" onClick={this.sendEmail} size="large">
+                          Email
+                      </Button>
+                      <input type="text" name="email" value={this.state.email} 
+                        onChange={this.handleEmailChange.bind(this)}/>
+                  </div>
+                  
               </div>
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseEnter={this.handleTextClick} >
-                  {this.state.res.map(words => (
-                      <SwitchWord key={words.word} {...words} colors={styles}/>))}
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onKeyDown={this.handleDown} onMouseEnter={this.handleTextClick} >
+                  {this.justclicked &&
+                    this.state.res.map(words => (
+                      <SwitchWord key={words.word} {...words} colors={styles}/>))
+                    }
+                  {!this.justclicked &&
+                    this.state.text_input}
               </div>
           </div>
         );
