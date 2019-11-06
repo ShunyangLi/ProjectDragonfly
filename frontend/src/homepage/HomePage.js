@@ -22,6 +22,7 @@ class HomePage extends React.Component {
             id: 1,
             res: [],
             text_input: "",
+            email: "",
             adverb: {
                 color: {
                     r: '242',
@@ -143,7 +144,6 @@ class HomePage extends React.Component {
         this.setState({
             select_value: value
         });
-        // console.log(`selected ${value}`);
     };
 
     // handle the upload file
@@ -189,15 +189,6 @@ class HomePage extends React.Component {
         });
     };
 
-    // this function clears the textfield
-    clearTextField() {
-        document.getElementById('words').innerText = "";
-        this.setState({
-            text_input: ""
-        });
-    };
-
-    // get the default text in the database
     componentDidMount() {
         this._isMounted = true;
     };
@@ -209,6 +200,7 @@ class HomePage extends React.Component {
     // this is for handle open the color picker
     handleClick = (e) => {
         let id = e.target.id;
+        console.log(id);
         id += 'Display';
         this.setState({
             [id]: !this.state.displayColorPicker,
@@ -236,6 +228,17 @@ class HomePage extends React.Component {
             }
         })
     };
+    
+    sendEmail = () => {
+        const input = document.getElementById('words');
+        html2canvas(input)
+            .then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                pdf.addImage(imgData, 'JPEG', 0, 0);
+                pdf.save("download.pdf");
+            });
+    }
 
     // this function is handle the input in div
     handleEditor = (e) => {
@@ -255,6 +258,7 @@ class HomePage extends React.Component {
         });
         this.forceUpdate();
     };
+    
     
     handleTextClick = (e) => {
         if (this.justclicked === true) {
@@ -336,6 +340,11 @@ class HomePage extends React.Component {
             visible: false
         })
     };
+    
+    handleEmailChange(event) {  
+        this.setState({email: event.target.value})
+        //console.log(this.state.email);
+    }
 
     render() {
         // this part is about upload
@@ -501,7 +510,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.adverb.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>adverb</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adverb</font>
                   </div>
 
                   {/* noun */}
@@ -516,17 +525,8 @@ class HomePage extends React.Component {
                       <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Noun</font>
                   </div>
 
-                  {/*/!* adposition *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.adposition } id="adposition"/>
-                      </div>
-                      { this.state.adpositionDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.adposition.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adposition</font>
-                  </div>
+                  {/* adposition */ } 
+                  
 
                   {/*/!* determiner *!/*/}
                   <div>
@@ -537,7 +537,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.determiner.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>determiner</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Determiner</font>
                   </div>
 
 
@@ -644,6 +644,15 @@ class HomePage extends React.Component {
                           Upload
                       </Button>
                   </div>
+                  
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="arrow-right" onClick={this.sendEmail} size="large">
+                          Email
+                      </Button>
+                      <input type="text" name="email" value={this.state.email} 
+                        onChange={this.handleEmailChange.bind(this)}/>
+                  </div>
+                  
               </div>
 
 
