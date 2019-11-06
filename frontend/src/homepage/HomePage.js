@@ -200,18 +200,6 @@ class HomePage extends React.Component {
     // get the default text in the database
     componentDidMount() {
         this._isMounted = true;
-        const axios = require('axios');
-        axios.get('http://127.0.0.1:5000/info/', {
-            params: {
-                "id": this.state.id
-            }
-        }).then(res => {
-            this.setState({
-                res: res.data.res
-            });
-        }).catch(function (error) {
-            console.log(error);
-        });
     };
     
     componentWillUnmount() {
@@ -255,10 +243,17 @@ class HomePage extends React.Component {
         if (e.keyCode===65 && e.ctrlKey) {
             
         }
+        this.setState({
+            res: []
+        });
+        this.forceUpdate();
     };
     
     handleDown = (e) => {
-        
+        this.setState({
+            res: []
+        });
+        this.forceUpdate();
     };
     
     handleTextClick = (e) => {
@@ -275,7 +270,7 @@ class HomePage extends React.Component {
 
     };
 
-    async getText(input_text) {
+    getText = (input_text) => {
         return axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
                 "text": input_text
@@ -290,7 +285,7 @@ class HomePage extends React.Component {
     };
 
     // TODO this is sam's update functions
-    handleUpdate = async event => {
+    handleUpdate = () => {
         this.justclicked = true;
         // save the text
         //var input_text = document.getElementById('words').innerText;
@@ -298,12 +293,13 @@ class HomePage extends React.Component {
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
         // clear the text
         if (input_text === "") {
+            console.log("here");
             this.setState({
                 text_input: " "
             });
+            input_text = " ";
         }
-        const promise = await this.getText(input_text);
-        await promise;
+        this.getText(input_text);
         console.log(this);
         this.setState({ key: Math.random() });
     };
@@ -655,7 +651,8 @@ class HomePage extends React.Component {
               <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onKeyDown={this.handleDown} onMouseEnter={this.handleTextClick} >
                   {this.justclicked &&
                     this.state.res.map(words => (
-                      <SwitchWord key={words.word} {...words} colors={styles}/>))}
+                      <SwitchWord key={words.word} {...words} colors={styles}/>))
+                    }
                   {!this.justclicked &&
                     this.state.text_input}
               </div>
