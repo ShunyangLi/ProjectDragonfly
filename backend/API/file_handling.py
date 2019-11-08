@@ -3,12 +3,14 @@ This is for handling the uploading files
 """
 import os
 import nltk
-from APP import app
+from APP import app, mail
 from util.PDFToText import get_text
 from util.db_handling import *
 from werkzeug.datastructures import FileStorage
 from flask_restplus import Api, reqparse, abort, Resource
 from flask import Flask, jsonify, make_response, request
+from flask_mail import Mail, Message
+import base64
 
 api = Api(app)
 
@@ -51,7 +53,6 @@ class Textarea(Resource):
 upload = api.namespace('upload', description="Upload files API")
 @upload.route("/", strict_slashes=False)
 class Upload(Resource):
-
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('file', location='files', type=FileStorage, required=True, action='append')
@@ -59,7 +60,6 @@ class Upload(Resource):
         args = parser.parse_args()
         files = args.get('file')
         language = args.get('language')
-
         # check every files uploaded
         for file in files:
             if file and allowed_file(file.filename):
@@ -107,9 +107,25 @@ class Info(Resource):
             })
         return make_response(jsonify({"res": res}), 200)
         
-        
-
-
+email = api.namespace('email', description="Email api")
+@email.route("/", strict_slashes=False)
+class Email(Resource):
+    def post(self):
+        # receive the args: pdf file and target email
+        parser = reqparse.RequestParser()
+        parser.add_argument('pdf')
+        parser.add_argument('email')
+        args = parser.parse_args()
+        pdf = args.get('pdf')
+        email = args.get('email')
+        pdf = base64.b64decode(pdf)
+        #print(email)
+        #print(pdf)     
+        msg = Message("Here's your syntax highlighted file!", sender = 'comp6733@gmail.com', recipients = [email])
+        msg.attach(filename="file.pdf", content_type='application/pdf', data=pdf)
+        mail.send(msg)
+        res = []
+        return make_response(jsonify({"res": res}), 200)
 
 
 

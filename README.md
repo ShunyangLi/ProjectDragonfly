@@ -66,6 +66,7 @@ pip install -U requests
 pip install -U nltk
 pip install -U flask_restplus
 pip install -U pymongo
+pip install flask_mail
 ```
 
 Install mongodb

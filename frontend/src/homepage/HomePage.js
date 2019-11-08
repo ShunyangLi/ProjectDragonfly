@@ -152,13 +152,10 @@ class HomePage extends React.Component {
         fileList.forEach(file => {
             formData.append('file', file);
         });
-
         formData.append('language', this.state.select_value.toString());
-
         this.setState({
             uploading: true,
         });
-
         // You can use any AJAX library you like
         reqwest({
             url: 'http://127.0.0.1:5000/upload/',
@@ -229,13 +226,35 @@ class HomePage extends React.Component {
     };
     
     sendEmail = () => {
-        const input = document.getElementById('words');
+        var input = document.getElementById('words');
         html2canvas(input)
             .then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF();
+                var imgData = canvas.toDataURL('image/png');
+                var pdf = new jsPDF();
                 pdf.addImage(imgData, 'JPEG', 0, 0);
-                pdf.save("download.pdf");
+                pdf = btoa(pdf.output());
+                //console.log(pdf)
+                // send to backend
+                var formData = new FormData();
+                formData.append('pdf', pdf);
+                formData.append('email', this.state.email)
+                //console.log(this.state.email)
+                reqwest({
+                    url: 'http://127.0.0.1:5000/email/',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    mimeTypes:"multipart/form-data",
+                    success: (res) => {
+                        console.log(res);
+                        message.success('Email was sent!');
+                    },
+                    error: () => {
+                        message.error('Email failed');
+                    },
+                });
             });
     }
 
@@ -310,11 +329,11 @@ class HomePage extends React.Component {
     // this is handle download
     handleDownload = () => {
         // make the inout firstly
-        const input = document.getElementById('words');
+        var input = document.getElementById('words');
         html2canvas(input)
             .then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF();
+                var imgData = canvas.toDataURL('image/png');
+                var pdf = new jsPDF();
                 pdf.addImage(imgData, 'JPEG', 0, 0);
                 pdf.save("download.pdf");
             });
