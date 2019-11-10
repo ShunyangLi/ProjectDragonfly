@@ -77,6 +77,7 @@ sudo apt install mongodb
 Install treetagger
 ```
 Follow the instructions here: https://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/
+Make sure to install English, French and Spanish parameter files
 Once you have installed treetagger, go to file_handling.py and replace treetaggerPath with your install path
 ```
 
