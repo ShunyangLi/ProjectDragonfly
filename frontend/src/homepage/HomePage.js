@@ -16,12 +16,14 @@ class HomePage extends React.Component {
 
     constructor(props) {
         super(props);
+        this.handleLanguage = this.handleLanguage.bind(this)
         // now need to into the state then pass them into other two part
         this.state = {
             id: 1,
             res: [],
             text_input: "",
             email: "",
+            language: "english",
             adverb: {
                 color: {
                     r: '242',
@@ -126,8 +128,7 @@ class HomePage extends React.Component {
             fileList: [],
             uploading: false,
             visible: false,
-            confirmLoading: false,
-            select_value: "english"
+            confirmLoading: false
         }
     }
 
@@ -138,13 +139,6 @@ class HomePage extends React.Component {
         });
     };
 
-    // this is handle the select value
-    handleSelect = (value) => {
-        this.setState({
-            select_value: value
-        });
-    };
-
     // handle the upload file
     handleUpload = () => {
         const { fileList } = this.state;
@@ -152,7 +146,7 @@ class HomePage extends React.Component {
         fileList.forEach(file => {
             formData.append('file', file);
         });
-        formData.append('language', this.state.select_value.toString());
+        formData.append('language', this.state.language);
         this.setState({
             uploading: true,
         });
@@ -166,14 +160,13 @@ class HomePage extends React.Component {
             processData: false,
             mimeTypes:"multipart/form-data",
             success: (res) => {
-                console.log(res);
+                //console.log(res);
                 this.setState({
                     fileList: [],
                     uploading: false,
                     visible: false,
                     res: res.res
                 });
-
                 message.success('Your file upload success');
             },
             error: () => {
@@ -183,6 +176,12 @@ class HomePage extends React.Component {
                 message.error('Your file upload failed.');
             },
         });
+    };
+
+    handleLanguage(e) {
+        this.setState({
+            language: e
+        })
     };
 
     componentDidMount() {
@@ -196,7 +195,7 @@ class HomePage extends React.Component {
     // this is for handle open the color picker
     handleClick = (e) => {
         let id = e.target.id;
-        console.log(id);
+        //console.log(id);
         id += 'Display';
         this.setState({
             [id]: !this.state.displayColorPicker,
@@ -248,7 +247,7 @@ class HomePage extends React.Component {
                     processData: false,
                     mimeTypes:"multipart/form-data",
                     success: (res) => {
-                        console.log(res);
+                        //console.log(res);
                         message.success('Email was sent!');
                     },
                     error: () => {
@@ -295,7 +294,8 @@ class HomePage extends React.Component {
     getText = (input_text) => {
         return axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
-                "text": input_text
+                "text": input_text,
+                "language": this.state.language
             }
         }).then(res => {
            this.setState({
@@ -309,20 +309,21 @@ class HomePage extends React.Component {
     // TODO this is sam's update functions
     handleUpdate = () => {
         this.justclicked = true;
+        console.log(this.state.language);
         // save the text
         //var input_text = document.getElementById('words').innerText;
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
         // clear the text
         if (input_text === "") {
-            console.log("here");
+            //console.log("here");
             this.setState({
                 text_input: " "
             });
             input_text = " ";
         }
         this.getText(input_text);
-        console.log(this);
+        //console.log(this);
         this.setState({ key: Math.random() });
     };
 
@@ -490,11 +491,6 @@ class HomePage extends React.Component {
                   onCancel={this.handleCloseModal}
               >
 
-                  <Select defaultValue="english" style={{ width: '100%', marginBottom: '2%' }} onChange={this.handleSelect}>
-                      <Option value="english">english</Option>
-                      <Option value="chinese">chinese</Option>
-                  </Select>
-
                   <Dragger {...props}>
                       <p className="ant-upload-drag-icon">
                           <Icon type="inbox" />
@@ -642,7 +638,13 @@ class HomePage extends React.Component {
                       </div> : null }
                       <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adjective</font>
                   </div>
-
+                    
+                  <Select defaultValue="English" style={{ width: 120 }} onChange={this.handleLanguage}>
+                    <Option value="english">English</Option>
+                    <Option value="spanish">Spanish</Option>
+                    <Option value="french">French</Option>
+                  </Select>  
+                  
                   {/* add the download button */}
 
                   <div>
@@ -697,23 +699,23 @@ const SwitchWord = (props) => {
     let color = props.colors;
 
     switch (type) {
-        case (type.match(/^VB*/) || {}).input:
+        case (type.match(/^VB*/) || type.match(/^VER*/)|| {}).input:
             return (<span style={{color: color.verb.background}}> {word}</span>);
-        case (type.match(/^NN*/) || {}).input:
+        case (type.match(/^NN*/) || type.match(/^NOM/) || {}).input:
             return (<span style={{color: color.noun.background}}> {word}</span> );
-        case (type.match(/^RB*/) || {}).input:
+        case (type.match(/^RB*/) || type.match(/^ADV*/) || {}).input:
             return (<span style={{color: color.adverb.background}}> {word}</span>);
-        case (type.match(/^DT/) || {}).input:
+        case (type.match(/^DT/) || type.match(/^DET*/) || {}).input:
             return (<span style={{color: color.determiner.background}}> {word}</span>);
-        case (type.match(/^UH/) || {}).input:
+        case (type.match(/^UH/) || type.match(/^INT*/) ||{}).input:
             return (<span style={{color: color.interjection.background}}> {word}</span>);
         case (type.match(/^RP/) || {}).input:
             return (<span style={{color: color.particle.background}}> {word}</span>);
-        case (type.match(/^CC/) || {}).input:
+        case (type.match(/^CC/) || type.match(/^KON*/) ||{}).input:
             return (<span style={{color: color.conjunction.background}}> {word}</span>);
-        case (type.match(/^JJ*|^PR*/) || {}).input:
+        case (type.match(/^JJ*|^PR*/) || type.match(/^ADJ*/) || {}).input:
             return (<span style={{color: color.adjective.background}}> {word}</span>);
-        case (type.match(/^TO*/) || {}).input:
+        case (type.match(/^TO*/) || type.match(/^PRP*/) || {}).input:
             return (<span style={{color: color.adposition.background}}> {word}</span>);
         case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || {}).input:
             return (<span style={{color: color.unknown.background}}>{word}</span>);
