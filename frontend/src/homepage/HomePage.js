@@ -11,6 +11,7 @@ import { Button, Modal, Select, Upload, Icon, message } from 'antd';
 
 const { Dragger } = Upload;
 const { Option } = Select;
+let timer = null;
 
 // this is home page, we need contain the highlight part and tools part
 class HomePage extends React.Component {
@@ -239,46 +240,29 @@ class HomePage extends React.Component {
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        // ctrl + a
-        if (e.keyCode===65 && e.ctrlKey) {
-            
+        // if get timer, then clear it
+        if (timer !== null) {
+            clearTimeout(timer);
+            timer = null;
         }
-        this.setState({
-            res: []
-        });
-        this.forceUpdate();
-    };
-    
-    handleDown = (e) => {
-        this.setState({
-            res: []
-        });
-        this.forceUpdate();
-    };
-    
-    handleTextClick = (e) => {
-        if (this.justclicked === true) {
-            this.justclicked = false;
-            let html_input = document.getElementById('words').innerHTML;
-            let input_text = html_input.replace(/<[^>]*>?/gm, '');
-            this.setState({
-                text_input: input_text,
-                res: []
-            });
-            this.forceUpdate();
-        }
+
+        timer = setTimeout(() => {
+            this.handleUpdate();
+            clearTimeout(timer);
+            timer = null;
+        }, 3000);
 
     };
 
-    getText = (input_text) => {
-        return axios.get('http://127.0.0.1:5000/textarea/', {
+    updateText = (input_text) => {
+        axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
                 "text": input_text
             }
-        }).then(res => {
-           this.setState({
-                res: res.data.res
-           });
+        }).then(dataRes => {
+            this.setState({
+                res: dataRes.data.res
+            });
         }).catch(function (error) {
             console.log(error);
         });
@@ -286,22 +270,23 @@ class HomePage extends React.Component {
 
     // TODO this is sam's update functions
     handleUpdate = () => {
-        this.justclicked = true;
+        if (timer !== null) {
+            clearTimeout(timer);
+            timer = null;
+        }
         // save the text
         //var input_text = document.getElementById('words').innerText;
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
-        // clear the text
-        if (input_text === "") {
-            console.log("here");
+        console.log(input_text);frontend/src/homepage/HomePage.js
+        
+        if (input_text !== "") {
             this.setState({
-                text_input: " "
+                res: []
             });
-            input_text = " ";
         }
-        this.getText(input_text);
-        console.log(this);
-        this.setState({ key: Math.random() });
+        document.getElementById('words').textContent = "";
+        this.updateText(input_text);
     };
 
     // this is handle download
@@ -327,7 +312,7 @@ class HomePage extends React.Component {
         this.setState({
             text_input: input_text,
             res: []
-        })
+        });
         this.forceUpdate();
     };
     
@@ -648,13 +633,11 @@ class HomePage extends React.Component {
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onKeyDown={this.handleDown} onMouseEnter={this.handleTextClick} >
-                  {this.justclicked &&
-                    this.state.res.map(words => (
-                      <SwitchWord key={words.word} {...words} colors={styles}/>))
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} >
+                    {
+                    this.state.res.map((words, index) => (
+                      <SwitchWord key={index}{...words} colors={styles}/>))
                     }
-                  {!this.justclicked &&
-                    this.state.text_input}
               </div>
           </div>
         );
@@ -666,7 +649,6 @@ class HomePage extends React.Component {
 
 // this is switch the word type and color
 const SwitchWord = (props) => {
-
     let type = props.type;
     let word = props.word;
     let color = props.colors;
