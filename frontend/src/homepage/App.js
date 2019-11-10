@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import reqwest from 'reqwest';
@@ -7,24 +7,18 @@ import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
 import { Button, Modal, Select, Upload, Icon, message } from 'antd';
-
+import Uploader from "../components/Uploader";
 const { Dragger } = Upload;
 const { Option } = Select;
-let timer = null;
 
 // this is home page, we need contain the highlight part and tools part
-class HomePage extends React.Component {
-
+class App extends React.Component {
     constructor(props) {
         super(props);
-        this.handleLanguage = this.handleLanguage.bind(this);
         // now need to into the state then pass them into other two part
         this.state = {
             id: 1,
-            res: [],
             text_input: "",
-            email: "",
-            language: "english",
             adverb: {
                 color: {
                     r: '242',
@@ -126,67 +120,34 @@ class HomePage extends React.Component {
             adjectiveDisplay: false,
             displayColorPicker: false,
             current_id: '',
-            fileList: [],
-            uploading: false,
+            res:[],
             visible: false,
-            confirmLoading: false
         }
     }
 
-    // show the upload file modal
-    showModal = () => {
+    // this function clears the textfield
+    clearTextField() {
+        document.getElementById('words').innerText = "";
         this.setState({
-            visible: true,
+            text_input: ""
         });
     };
 
-    // handle the upload file
-    handleUpload = () => {
-        const { fileList } = this.state;
-        const formData = new FormData();
-        fileList.forEach(file => {
-            formData.append('file', file);
-        });
-        formData.append('language', this.state.language);
-        this.setState({
-            uploading: true,
-        });
-        // You can use any AJAX library you like
-        reqwest({
-            url: 'http://127.0.0.1:5000/upload/',
-            method: 'POST',
-            data: formData,
-            contentType: false,
-            cache: false,
-            processData: false,
-            mimeTypes:"multipart/form-data",
-            success: (res) => {
-                //console.log(res);
-                this.setState({
-                    fileList: [],
-                    uploading: false,
-                    visible: false,
-                    res: res.data.res
-                });
-                message.success('Your file upload success');
-            },
-            error: () => {
-                this.setState({
-                    uploading: false,
-                });
-                message.error('Your file upload failed.');
-            },
-        });
-    };
-
-    handleLanguage(e) {
-        this.setState({
-            language: e
-        })
-    };
-
+    // get the default text in the database
     componentDidMount() {
         this._isMounted = true;
+        const axios = require('axios');
+        axios.get('http://127.0.0.1:5000/info/', {
+            params: {
+                "id": this.state.id
+            }
+        }).then(res => {
+            this.setState({
+                res: res.data.res
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
     };
     
     componentWillUnmount() {
@@ -196,7 +157,6 @@ class HomePage extends React.Component {
     // this is for handle open the color picker
     handleClick = (e) => {
         let id = e.target.id;
-        //console.log(id);
         id += 'Display';
         this.setState({
             [id]: !this.state.displayColorPicker,
@@ -224,156 +184,104 @@ class HomePage extends React.Component {
             }
         })
     };
-    
-    sendEmail = () => {
-        var input = document.getElementById('words');
-        html2canvas(input)
-            .then((canvas) => {
-                var imgData = canvas.toDataURL('image/png');
-                var pdf = new jsPDF();
-                pdf.addImage(imgData, 'JPEG', 0, 0);
-                pdf = btoa(pdf.output());
-                //console.log(pdf)
-                // send to backend
-                var formData = new FormData();
-                formData.append('pdf', pdf);
-                formData.append('email', this.state.email);
-                //console.log(this.state.email)
-                reqwest({
-                    url: 'http://127.0.0.1:5000/email/',
-                    method: 'POST',
-                    data: formData,
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                    mimeTypes:"multipart/form-data",
-                    success: (res) => {
-                        //console.log(res);
-                        message.success('Email was sent!');
-                    },
-                    error: () => {
-                        message.error('Email failed');
-                    },
-                });
-            });
-    };
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        // if get timer, then clear it
-        if (timer !== null) {
-            clearTimeout(timer);
-            timer = null;
-        }
-
-        timer = setTimeout(() => {
-            this.handleUpdate();
-        }, 3000);
-
+        
     };
-
-    updateText = (input_text) => {
-        console.log(this.state.res);
-        axios.get('http://127.0.0.1:5000/textarea/', {
-            params: {
-                "text": input_text,
-                "language": this.state.language
-            }
-        }).then(dataRes => {
+    
+    handleTextClick = (e) => {
+        //console.log(document.getElementById('words').innerText);
+        //console.log(e.currentTarget.textContent);
+        //if (this._unchanged == true) {
+        if (1 == 2) {
+            console.log("wow");
+            this._unchanged = false;
+            let html_input = document.getElementById('words').innerHTML;
+            console.log(html_input);
+            let input_text = html_input.replace(/<[^>]*>?/gm, '');
+            console.log(input_text);
             this.setState({
-                res: dataRes.data.res
-            });
-            this.forceUpdate();
-        }).catch(function (error) {
-            console.log(error);
-        });
-    };
-
-    // TODO this is sam's update functions
-    handleUpdate = () => {
-        if (timer !== null) {
-            clearTimeout(timer);
-            timer = null;
-        }
-        // save the text
-        //var input_text = document.getElementById('words').innerText;
-        let html_input = document.getElementById('words').innerHTML;
-        let input_text = html_input.replace(/<[^>]*>?/gm, '');
-
-        if (input_text !== "") {
-            console.log(this.state.res);
-            this.setState({
+                text_input: input_text,
                 res: []
             });
             this.forceUpdate();
         }
+        
+    };
 
-        document.getElementById('words').textContent = "";
-        this.updateText(input_text);
+    async getText(input_text) {
+        return axios.get('http://127.0.0.1:5000/textarea/', {
+            params: {
+                "text": input_text
+            }
+        }).then(res => {
+           this.state.res = res.data.res;
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    // TODO this is sam's update functions
+    handleUpdate = async event => {
+        // send the text to backend!
+        this.setState({
+            text_input: "",
+            res: []
+        })
+        // save the text
+        //var input_text = document.getElementById('words').innerText;
+        let html_input = document.getElementById('words').innerHTML;
+        let input_text = html_input.replace(/<[^>]*>?/gm, '');
+        // clear the text
+        //document.getElementById('words').innerText = "";
+        const promise = await this.getText(input_text);
+        await promise;
+        //this.setState({ state: this.state });
+        if (document.getElementById('words') != null) {
+            document.getElementById('words').innerText = "";
+            this.forceUpdate();
+        }
+        
     };
 
     // this is handle download
     handleDownload = () => {
         // make the inout firstly
-        var input = document.getElementById('words');
+        const input = document.getElementById('words');
         html2canvas(input)
             .then((canvas) => {
-                var imgData = canvas.toDataURL('image/png');
-                var pdf = new jsPDF();
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
                 pdf.addImage(imgData, 'JPEG', 0, 0);
                 pdf.save("download.pdf");
             });
     };
 
+    generateKey = (pre) => {
+        return `${ pre }_${ new Date().getTime() }`;
+    }
+
     // TODO this is try to handle paste
     handlePaste = (e) => {
         // avoid the paste info, because we need to convert
-        e.preventDefault();
-        let content = e.clipboardData.getData('Text');
-        let html_input = document.getElementById('words').innerHTML;
-        let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
-        this.setState({
-            text_input: input_text,
-            res: []
-        });
-        this.forceUpdate();
-    };
+       //e.preventDefault();
 
-    handleCloseModal = () => {
-        this.setState({
-            visible: false
-        })
+        // let content = e.clipboardData.getData('Text');
+        // document.getElementById('words').append(content);
     };
-    
-    handleEmailChange(event) {  
-        this.setState({email: event.target.value})
-        //console.log(this.state.email);
+    handleRes = (res) =>{
+      this.setState({res : res})
     }
-
+    showModal = () => {
+        this.setState({visible:true});
+      };
+    handleCloseModal = () => {
+        console.log("closing");
+        this.setState({visible:false})
+    };
     render() {
         // this part is about upload
-        const { uploading, fileList } = this.state;
-        const props = {
-            onRemove: file => {
-                this.setState(state => {
-                    const index = state.fileList.indexOf(file);
-                    const newFileList = state.fileList.slice();
-                    newFileList.splice(index, 1);
-                    return {
-                        fileList: newFileList,
-                    };
-                });
-            },
-            beforeUpload: file => {
-                this.setState(state => ({
-                    fileList: [...state.fileList, file],
-                }));
-                return false;
-            },
-            fileList,
-        };
-        const { visible, confirmLoading } = this.state;
-
         // this is about css
         const styles = reactCSS({
             'default': {
@@ -468,35 +376,8 @@ class HomePage extends React.Component {
         return (
           <div>
               {/* upload files */}
-              <Modal
-                  title="Title"
-                  visible={visible}
-                  onOk={this.handleCloseModal}
-                  confirmLoading={confirmLoading}
-                  onCancel={this.handleCloseModal}
-              >
-
-                  <Dragger {...props}>
-                      <p className="ant-upload-drag-icon">
-                          <Icon type="inbox" />
-                      </p>
-                      <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                      <p className="ant-upload-hint">
-                          Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                          band files
-                      </p>
-                  </Dragger>
-                  <Button
-                      size={"large"}
-                      onClick={this.handleUpload}
-                      disabled={fileList.length === 0 }
-                      loading={uploading}
-                      style={{ marginTop: 16, width: '100%' }}
-                  >
-                      {uploading ? 'Uploading' : 'Start Upload'}
-                  </Button>
-              </Modal>
-
+              <Uploader handleRes = {this.handleRes} handleCloseModal={this.handleCloseModal} visible = {this.state.visible}/>
+              
               {/* The second part is tools container */}
               <div className="intro">
                   Hello this is the introduction about English highlight.
@@ -509,7 +390,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.adverb.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adverb</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>adverb</font>
                   </div>
 
                   {/* noun */}
@@ -524,8 +405,17 @@ class HomePage extends React.Component {
                       <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Noun</font>
                   </div>
 
-                  {/* adposition */ } 
-                  
+                  {/*/!* adposition *!/*/}
+                  <div>
+                      <div style={ styles.swatch } onClick={ this.handleClick }>
+                          <div style={ styles.adposition } id="adposition"/>
+                      </div>
+                      { this.state.adpositionDisplay ? <div style={ styles.popover }>
+                          <div style={ styles.cover } onClick={ this.handleClose }/>
+                          <SketchPicker color={ this.state.adposition.color } onChange={ this.handleChange } />
+                      </div> : null }
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adposition</font>
+                  </div>
 
                   {/*/!* determiner *!/*/}
                   <div>
@@ -536,7 +426,7 @@ class HomePage extends React.Component {
                           <div style={ styles.cover } onClick={ this.handleClose }/>
                           <SketchPicker color={ this.state.determiner.color } onChange={ this.handleChange } />
                       </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Determiner</font>
+                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>determiner</font>
                   </div>
 
 
@@ -623,13 +513,7 @@ class HomePage extends React.Component {
                       </div> : null }
                       <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adjective</font>
                   </div>
-                    
-                  <Select defaultValue="English" style={{ width: 120 }} onChange={this.handleLanguage}>
-                    <Option value="english">English</Option>
-                    <Option value="spanish">Spanish</Option>
-                    <Option value="french">French</Option>
-                  </Select>  
-                  
+
                   {/* add the download button */}
 
                   <div>
@@ -649,24 +533,13 @@ class HomePage extends React.Component {
                           Upload
                       </Button>
                   </div>
-                  
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="arrow-right" onClick={this.sendEmail} size="large">
-                          Email
-                      </Button>
-                      <input type="text" name="email" value={this.state.email} 
-                        onChange={this.handleEmailChange.bind(this)}/>
-                  </div>
-                  
               </div>
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} >
-                    {
-                    this.state.res.map((words, index) => (
-                      <SwitchWord key={index}{...words} colors={styles} id={index}/>))
-                    }
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseEnter={this.handleTextClick} >
+                  {this.state.res.map(words => (
+                      <SwitchWord key={words.word} {...words} colors={styles}/>))}
               </div>
           </div>
         );
@@ -676,35 +549,36 @@ class HomePage extends React.Component {
 
 // this is switch the word type and color
 const SwitchWord = (props) => {
+
     let type = props.type;
     let word = props.word;
     let color = props.colors;
 
     switch (type) {
-        case (type.match(/^VB*/) || type.match(/^VER*/)|| {}).input:
-            return (<span id={props.id} style={{color: color.verb.background}}> {word}</span>);
-        case (type.match(/^NN*/) || type.match(/^NOM/) || {}).input:
-            return (<span id={props.id} style={{color: color.noun.background}}> {word}</span> );
-        case (type.match(/^RB*/) || type.match(/^ADV*/) || {}).input:
-            return (<span id={props.id} style={{color: color.adverb.background}}> {word}</span>);
-        case (type.match(/^DT/) || type.match(/^DET*/) || {}).input:
-            return (<span id={props.id} style={{color: color.determiner.background}}> {word}</span>);
-        case (type.match(/^UH/) || type.match(/^INT*/) ||{}).input:
-            return (<span id={props.id} style={{color: color.interjection.background}}> {word}</span>);
+        case (type.match(/^VB*/) || {}).input:
+            return (<span style={{color: color.verb.background}}> {word}</span>);
+        case (type.match(/^NN*/) || {}).input:
+            return (<span style={{color: color.noun.background}}> {word}</span> );
+        case (type.match(/^RB*/) || {}).input:
+            return (<span style={{color: color.adverb.background}}> {word}</span>);
+        case (type.match(/^DT/) || {}).input:
+            return (<span style={{color: color.determiner.background}}> {word}</span>);
+        case (type.match(/^UH/) || {}).input:
+            return (<span style={{color: color.interjection.background}}> {word}</span>);
         case (type.match(/^RP/) || {}).input:
-            return (<span id={props.id} style={{color: color.particle.background}}> {word}</span>);
-        case (type.match(/^CC/) || type.match(/^KON*/) ||{}).input:
-            return (<span id={props.id} style={{color: color.conjunction.background}}> {word}</span>);
-        case (type.match(/^JJ*|^PR*/) || type.match(/^ADJ*/) || {}).input:
-            return (<span id={props.id} style={{color: color.adjective.background}}> {word}</span>);
-        case (type.match(/^TO*/) || type.match(/^PRP*/) || {}).input:
-            return (<span id={props.id} style={{color: color.adposition.background}}> {word}</span>);
+            return (<span style={{color: color.particle.background}}> {word}</span>);
+        case (type.match(/^CC/) || {}).input:
+            return (<span style={{color: color.conjunction.background}}> {word}</span>);
+        case (type.match(/^JJ*|^PR*/) || {}).input:
+            return (<span style={{color: color.adjective.background}}> {word}</span>);
+        case (type.match(/^TO*/) || {}).input:
+            return (<span style={{color: color.adposition.background}}> {word}</span>);
         case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || {}).input:
-            return (<span id={props.id} style={{color: color.unknown.background}}>{word}</span>);
+            return (<span style={{color: color.unknown.background}}>{word}</span>);
         default:
-            return (<span id={props.id} style={{color: color.unknown.background}}> {word}</span>)
+            return (<span style={{color: color.unknown.background}}> {word}</span>)
     }
 };
 
+export default App;
 
-export default HomePage;
