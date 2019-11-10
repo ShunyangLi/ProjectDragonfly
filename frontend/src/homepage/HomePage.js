@@ -165,8 +165,9 @@ class HomePage extends React.Component {
                     fileList: [],
                     uploading: false,
                     visible: false,
-                    res: res.res
+                    res: res.data.res
                 });
+                console.log(res)
                 message.success('Your file upload success');
             },
             error: () => {
