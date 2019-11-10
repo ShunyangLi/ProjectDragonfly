@@ -81,7 +81,14 @@ Make sure to install English, French and Spanish parameter files
 Once you have installed treetagger, go to file_handling.py and replace treetaggerPath with your install path
 ```
 
+or you can use `install.sh` to install that
+
+```shell
+sh install.sh
+```
+
 Run backend
+
 ```
 cd backend/
 python run.py
@@ -221,5 +228,5 @@ npm start
 - WP wh-pronoun who, what
 - WP$ possessive wh-pronoun whose
 - WRB wh-abverb where, when
-   
+  
 
