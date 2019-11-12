@@ -26,6 +26,8 @@ class HomePage extends React.Component {
             email: "",
             remove_switchword: false,
             language: "english",
+            reportText: false,
+            itemData: {},
             adverb: {
                 color: {
                     r: '242',
@@ -354,6 +356,20 @@ class HomePage extends React.Component {
         //console.log(this.state.email);
     }
 
+    // show text field when clicking "Report".
+    showReport = (itemData) => {
+        this.setState({
+            reportText: true,
+            itemData
+        });
+    }
+
+    changeFieldState = (status) =>{
+        this.setState({
+            visible:status
+        })
+    }
+
     render() {
         // this part is about upload
         const { uploading, fileList } = this.state;
@@ -661,6 +677,12 @@ class HomePage extends React.Component {
                       </Button>
                       <input type="text" name="email" value={this.state.email} 
                         onChange={this.handleEmailChange.bind(this)}/>
+                  </div>
+
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.showReport} size="small">
+                          Report bugs
+                      </Button>
                   </div>
                   
               </div>
