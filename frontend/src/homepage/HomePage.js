@@ -8,6 +8,8 @@ import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
 import { Button, Modal, Select, Upload, Icon, message } from 'antd';
 
+import "../index.css"
+
 const { Dragger } = Upload;
 const { Option } = Select;
 let timer = null;
@@ -369,6 +371,11 @@ class HomePage extends React.Component {
             visible:status
         })
     }
+    
+    //change background color
+    changeBackgroundColor = () => {
+        document.getElementById('words').className = "word_container" ;
+    };
 
     render() {
         // this part is about upload
@@ -684,12 +691,18 @@ class HomePage extends React.Component {
                           Report bugs
                       </Button>
                   </div>
+                               
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.changeBackgroundColor} size="large">
+                          Background
+                      </Button>
+                  </div>
                   
               </div>
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+              <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                     {switchword}
               </div>
           </div>
