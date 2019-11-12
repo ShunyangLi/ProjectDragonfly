@@ -42,10 +42,10 @@ class Textarea(Resource):
         args = parser.parse_args()
         text = args.get('text')
         language = args.get('language')
-        print(language)
+        #print(language)
         if text is None:
             abort(400, 'Missing text')
-        if language is None: # english, fix this later pls
+        if language == "english":
             token = nltk.word_tokenize(text)
             data = nltk.pos_tag(token)
             res = []
@@ -55,7 +55,7 @@ class Textarea(Resource):
                     "type": word_type
                 })
             return make_response(jsonify({"res": res}), 200)
-        elif language == 'french':
+        else:
             tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
             result = tt.tag(text)
             res = []
@@ -66,6 +66,7 @@ class Textarea(Resource):
                 })
             print(res)
             return make_response(jsonify({"res": res}), 200)
+        
 
 
 upload = api.namespace('upload', description="Upload files API")
@@ -78,7 +79,7 @@ class Upload(Resource):
         args = parser.parse_args()
         files = args.get('file')
         language = args.get('language')
-        print(language)
+        #print(language)
         # check every files uploaded
         for file in files:
             if file and allowed_file(file.filename):
