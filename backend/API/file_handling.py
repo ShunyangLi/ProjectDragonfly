@@ -12,7 +12,7 @@ from flask import Flask, jsonify, make_response, request
 from flask_mail import Mail, Message
 import base64
 from treetagger import TreeTagger # to install this, read README
-treetaggerPath = '/home/sam/Downloads/treetagger/' # install and fill this in
+treetaggerPath = '/Users/lsy/Desktop/cs/cs4920/ProjectDragonfly/treetagger' # install and fill this in
 
 api = Api(app)
 
@@ -41,10 +41,10 @@ class Textarea(Resource):
         args = parser.parse_args()
         text = args.get('text')
         language = args.get('language')
-        print(language)
+
         if text is None:
             abort(400, 'Missing text')
-        if language is None: # english, fix this later pls
+        if language is None or language == 'english': # english, fix this later pls
             token = nltk.word_tokenize(text)
             data = nltk.pos_tag(token)
             res = []
