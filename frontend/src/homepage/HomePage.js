@@ -6,7 +6,7 @@ import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
-import { Button, Modal, Select, Upload, Icon, message } from 'antd';
+import { Button, Modal, Select, Upload, Icon, message, Input } from 'antd';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -27,7 +27,6 @@ class HomePage extends React.Component {
             remove_switchword: false,
             language: "english",
             reportText: false,
-            itemData: {},
             adverb: {
                 color: {
                     r: '242',
@@ -348,18 +347,17 @@ class HomePage extends React.Component {
     }
 
     // show text field when clicking "Report".
-    showReport = (itemData) => {
+    showReport = () => {
         this.setState({
             reportText: true,
-            itemData
-        });
-    }
-
-    changeFieldState = (status) =>{
-        this.setState({
-            visible:status
         })
-    }
+    };
+
+    handleCloseText = () => {
+        this.setState({
+            reportText: false,
+        })
+    };
 
     render() {
         // this part is about upload
@@ -384,6 +382,10 @@ class HomePage extends React.Component {
             fileList,
         };
         const { visible, confirmLoading } = this.state;
+
+        // this is about bug report.
+        // const { reportText } = this.state;
+        const { TextArea } = Input;
 
         // this is about css
         const styles = reactCSS({
@@ -642,7 +644,27 @@ class HomePage extends React.Component {
                     <Option value="english">English</Option>
                     <Option value="spanish">Spanish</Option>
                     <Option value="french">French</Option>
-                  </Select>  
+                  </Select>
+
+                  {/*/!* report text form *!/*/}
+                  <Modal
+                      title="Please report issues here"
+                      visible={this.state.reportText}
+                      // onOK={this.handleCloseText}
+                      onCancel={this.handleCloseText}
+                  >
+
+                      <TextArea rows={4} />
+
+                      <Button
+                          // onClick={this.handleUpload}
+                          style={{ marginTop:'2%', marginBottom: '2%', width: '150px' }}
+                          size={"small"}
+                      >
+                          Submit
+                      </Button>
+
+                  </Modal>
                   
                   {/* add the download button */}
 
