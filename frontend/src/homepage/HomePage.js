@@ -8,6 +8,8 @@ import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
 import { Button, Modal, Select, Upload, Icon, message, Input } from 'antd';
 
+import "../index.css"
+
 const { Dragger } = Upload;
 const { Option } = Select;
 let timer = null;
@@ -187,13 +189,13 @@ class HomePage extends React.Component {
         })
     };
 
-    componentDidMount() {
-        this._isMounted = true;
-    };
-    
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
+    // componentDidMount() {
+    //     this._isMounted = true;
+    // };
+    //
+    // componentWillUnmount() {
+    //     this._isMounted = false;
+    // }
         
     // this is for handle open the color picker
     handleClick = (e) => {
@@ -262,7 +264,16 @@ class HomePage extends React.Component {
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        
+        // if get timer, then clear it
+        if (timer !== null) {
+            clearTimeout(timer);
+            timer = null;
+        }
+
+        timer = setTimeout(() => {
+            this.handleUpdate();
+        }, 3000);
+
     };
 
     updateText = (input_text) => {
@@ -293,7 +304,7 @@ class HomePage extends React.Component {
             });
         }
         this.updateText(input_text);
-    }
+    };
     
     // this is sam's update functions
     handleUpdate = () => {
@@ -302,7 +313,7 @@ class HomePage extends React.Component {
         this.setState({
             res: [],
             text_input: ""
-        })
+        });
         document.getElementById('words').textContent = "";
         this.setState({ remove_switchword: false });
         this.updateText(input_text);
@@ -357,6 +368,16 @@ class HomePage extends React.Component {
         this.setState({
             reportText: false,
         })
+    }
+    
+    //change background color
+    changeBackgroundColor = () => {
+        if(document.getElementById('words').className == "word_container"){
+            document.getElementById('words').className = "word_container2";
+        }
+        else{
+            document.getElementById('words').className = "word_container";
+        }
     };
 
     render() {
@@ -479,7 +500,7 @@ class HomePage extends React.Component {
         });
         var switchword = this.state.remove_switchword ? this.state.text_input : 
             this.state.res.map((words, index) => (
-              <SwitchWord key={index}{...words} colors={styles} id={index}/>))
+              <SwitchWord key={index}{...words} colors={styles} id={index}/>));
         
         return (
           <div>
@@ -697,12 +718,18 @@ class HomePage extends React.Component {
                           Report bugs
                       </Button>
                   </div>
+                               
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.changeBackgroundColor} size="large">
+                          Background
+                      </Button>
+                  </div>
                   
               </div>
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+              <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                     {switchword}
               </div>
           </div>

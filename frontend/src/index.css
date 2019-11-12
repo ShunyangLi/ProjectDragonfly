@@ -16,6 +16,23 @@ code {
 .word_container {
   width: 59%;
   font-family: monospace;
+  background: #FFFFFF;
+  padding: 15px;
+  color: #000000;
+  white-space: pre-wrap;
+  line-height: 1.4em;
+  /* white-space: pre; */
+  /* overflow: scroll; */
+  box-sizing: border-box;
+  display: inline-block;
+  contentEditable: true;
+  height: 1000px;
+  overflow-y: auto;
+}
+
+.word_container2 {
+  width: 59%;
+  font-family: monospace;
   background: #2d2d2d;
   padding: 15px;
   color: #f2f0ec;
@@ -29,6 +46,7 @@ code {
   height: 1000px;
   overflow-y: auto;
 }
+
 
 /* the whole page container */
 .container {
