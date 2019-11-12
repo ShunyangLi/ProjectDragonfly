@@ -24,6 +24,7 @@ class HomePage extends React.Component {
             res: [],
             text_input: "",
             email: "",
+            remove_switchword: false,
             language: "english",
             adverb: {
                 color: {
@@ -260,20 +261,10 @@ class HomePage extends React.Component {
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        // if get timer, then clear it
-        if (timer !== null) {
-            clearTimeout(timer);
-            timer = null;
-        }
-
-        timer = setTimeout(() => {
-            this.handleUpdate();
-        }, 3000);
-
+        
     };
 
     updateText = (input_text) => {
-        console.log(this.state.res);
         axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
                 "text": input_text,
@@ -289,26 +280,30 @@ class HomePage extends React.Component {
         });
     };
 
-    // TODO this is sam's update functions
-    handleUpdate = () => {
-        if (timer !== null) {
-            clearTimeout(timer);
-            timer = null;
-        }
-        // save the text
-        //var input_text = document.getElementById('words').innerText;
+    handleReset = () => {
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
-
+        this.setState({ remove_switchword: true });
         if (input_text !== "") {
-            console.log(this.state.res);
+            //console.log(this.state.res);
             this.setState({
-                res: []
+                res: [],
+                text_input: input_text
             });
-            this.forceUpdate();
         }
-
+        this.updateText(input_text);
+    }
+    
+    // this is sam's update functions
+    handleUpdate = () => {
+        let html_input = document.getElementById('words').innerHTML;
+        let input_text = html_input.replace(/<[^>]*>?/gm, '');
+        this.setState({
+            res: [],
+            text_input: ""
+        })
         document.getElementById('words').textContent = "";
+        this.setState({ remove_switchword: false });
         this.updateText(input_text);
     };
 
@@ -464,7 +459,10 @@ class HomePage extends React.Component {
                 },
             },
         });
-
+        var switchword = this.state.remove_switchword ? this.state.text_input : 
+            this.state.res.map((words, index) => (
+              <SwitchWord key={index}{...words} colors={styles} id={index}/>))
+        
         return (
           <div>
               {/* upload files */}
@@ -498,7 +496,7 @@ class HomePage extends React.Component {
               </Modal>
 
               {/* The second part is tools container */}
-              <div className="intro">
+              <div className="intro" onMouseDown={this.handleUpdate}>
                   Hello this is the introduction about English highlight.
                   {/* This part is for adverb color picker */}
                   <div>
@@ -639,9 +637,7 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="edit" onClick={this.handleUpdate} size="large">
-                          Update
-                      </Button>
+                  
                   </div>
 
                   <div>
@@ -662,11 +658,8 @@ class HomePage extends React.Component {
 
 
               {/*  The first part is word container  */}
-              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} >
-                    {
-                    this.state.res.map((words, index) => (
-                      <SwitchWord key={index}{...words} colors={styles} id={index}/>))
-                    }
+              <div id="words" className="word_container" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+                    {switchword}
               </div>
           </div>
         );
@@ -675,7 +668,7 @@ class HomePage extends React.Component {
 }
 
 // this is switch the word type and color
-const SwitchWord = (props) => {
+var SwitchWord = (props) => {
     let type = props.type;
     let word = props.word;
     let color = props.colors;
