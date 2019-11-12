@@ -374,7 +374,12 @@ class HomePage extends React.Component {
     
     //change background color
     changeBackgroundColor = () => {
-        document.getElementById('words').className = "word_container" ;
+        if(document.getElementById('words').className == "word_container"){
+            document.getElementById('words').className = "word_container2";
+        }
+        else{
+            document.getElementById('words').className = "word_container";
+        }
     };
 
     render() {
