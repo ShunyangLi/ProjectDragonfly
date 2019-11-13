@@ -29,6 +29,7 @@ class HomePage extends React.Component {
             remove_switchword: false,
             language: "english",
             reportText: false,
+            bugText: "",
             adverb: {
                 color: {
                     r: '242',
@@ -369,6 +370,35 @@ class HomePage extends React.Component {
     handleCloseText = () => {
         this.setState({
             reportText: false,
+            bugText: ""
+        })
+    }
+    
+    handleBugText = (e) => {
+        //console.log(e.target.value);
+        this.setState({bugText: e.target.value});
+    }
+    
+    reportBug = () => {
+        var formData = new FormData();
+        formData.append('text', this.state.bugText);
+        
+        reqwest({
+            url: 'http://127.0.0.1:5000/bugreport/',
+            method: 'POST',
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            mimeTypes:"multipart/form-data",
+            success: (res) => {
+                //console.log(res);
+                message.success('Bug report was sent!');
+                this.handleCloseText();
+            },
+            error: () => {
+                message.error('Email failed');
+            },
         })
     }
     
@@ -677,13 +707,12 @@ class HomePage extends React.Component {
                       onCancel={this.handleCloseText}
                   >
 
-                      <TextArea rows={4} />
+                      <TextArea rows={4} onChange={this.handleBugText}/>
 
                       <Button
-                          // onClick={this.handleUpload}
+                          onClick={this.reportBug}
                           style={{ marginTop:'2%', marginBottom: '2%', width: '150px' }}
-                          size={"small"}
-                      >
+                          size={"small"}>
                           Submit
                       </Button>
 
@@ -716,8 +745,8 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.showReport} size="small">
-                          Report bugs
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="exclamation" onClick={this.showReport} size="large">
+                          Report bug
                       </Button>
                   </div>
                                

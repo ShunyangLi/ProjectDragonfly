@@ -142,12 +142,25 @@ class Email(Resource):
         pdf = base64.b64decode(pdf)
         #print(email)
         #print(pdf)     
-        msg = Message("Here's your syntax highlighted file!", sender = 'comp6733@gmail.com', recipients = [email])
+        msg = Message("Here's your syntax highlighted file!", sender = 'comp6733asdf@gmail.com', recipients = [email])
         msg.attach(filename="file.pdf", content_type='application/pdf', data=pdf)
         mail.send(msg)
         res = []
         return make_response(jsonify({"res": res}), 200)
-
-
+        
+bugreport = api.namespace('bugreport', description="bugreport api")
+@bugreport.route("/", strict_slashes=False)
+class Bugreport(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('text')
+        args = parser.parse_args()
+        text = args.get('text')
+        email = 'comp6733@gmail.com'
+        msg = Message("Bug report", sender = 'comp6733@gmail.com', recipients = [email])
+        msg.body = text
+        mail.send(msg)
+        res = []
+        return make_response(jsonify({"res": res}), 200)
 
 
