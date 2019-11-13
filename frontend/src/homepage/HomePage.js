@@ -372,7 +372,7 @@ class HomePage extends React.Component {
     
     //change background color
     changeBackgroundColor = () => {
-        if(document.getElementById('words').className == "word_container"){
+        if(document.getElementById('words').className === "word_container"){
             document.getElementById('words').className = "word_container2";
         }
         else{
@@ -535,7 +535,7 @@ class HomePage extends React.Component {
               </Modal>
 
               {/* The second part is tools container */}
-              <div className="intro" onMouseDown={this.handleUpdate}>
+              <div className="intro">
                   Hello this is the introduction about English highlight.
                   {/* This part is for adverb color picker */}
                   <div>
