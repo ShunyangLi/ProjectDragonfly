@@ -165,12 +165,14 @@ class HomePage extends React.Component {
             processData: false,
             mimeTypes:"multipart/form-data",
             success: (res) => {
-                //console.log(res);
+                console.log(res.res);
                 this.setState({
                     fileList: [],
                     uploading: false,
                     visible: false,
-                    res: res.data.res
+                    res: res.res,
+                    text_input: "",
+                    remove_switchword: false
                 });
                 message.success('Your file upload success');
             },
