@@ -29,6 +29,7 @@ class HomePage extends React.Component {
             remove_switchword: false,
             language: "english",
             reportText: false,
+            bugText: "",
             adverb: {
                 color: {
                     r: '242',
@@ -166,12 +167,14 @@ class HomePage extends React.Component {
             processData: false,
             mimeTypes:"multipart/form-data",
             success: (res) => {
-                //console.log(res);
+                console.log(res.res);
                 this.setState({
                     fileList: [],
                     uploading: false,
                     visible: false,
-                    res: res.data.res
+                    res: res.res,
+                    text_input: "",
+                    remove_switchword: false
                 });
                 message.success('Your file upload success');
             },
@@ -368,6 +371,35 @@ class HomePage extends React.Component {
     handleCloseText = () => {
         this.setState({
             reportText: false,
+            bugText: ""
+        })
+    }
+    
+    handleBugText = (e) => {
+        //console.log(e.target.value);
+        this.setState({bugText: e.target.value});
+    }
+    
+    reportBug = () => {
+        var formData = new FormData();
+        formData.append('text', this.state.bugText);
+        
+        reqwest({
+            url: 'http://127.0.0.1:5000/bugreport/',
+            method: 'POST',
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            mimeTypes:"multipart/form-data",
+            success: (res) => {
+                //console.log(res);
+                message.success('Bug report was sent!');
+                this.handleCloseText();
+            },
+            error: () => {
+                message.error('Email failed');
+            },
         })
     };
 
@@ -401,7 +433,7 @@ class HomePage extends React.Component {
     
     //change background color
     changeBackgroundColor = () => {
-        if(document.getElementById('words').className == "word_container"){
+        if(document.getElementById('words').className === "word_container"){
             document.getElementById('words').className = "word_container2";
         }
         else{
@@ -563,7 +595,7 @@ class HomePage extends React.Component {
               </Modal>
 
               {/* The second part is tools container */}
-              <div className="intro" onMouseDown={this.handleUpdate}>
+              <div className="intro">
                   Hello this is the introduction about English highlight.
                   {/* This part is for adverb color picker */}
                   <div>
@@ -703,13 +735,12 @@ class HomePage extends React.Component {
                       onCancel={this.handleCloseText}
                   >
 
-                      <TextArea rows={6} id="reports"  onKeyUp={this.reportEditor} />
+                      <TextArea rows={4} onChange={this.handleBugText}/>
 
                       <Button
-                          onClick={this.handleReport}
-                          style={{ marginTop:'2%', marginBottom: '2%', width: '100%' }}
-                          size={"large"}
-                      >
+                          onClick={this.reportBug}
+                          style={{ marginTop:'2%', marginBottom: '2%', width: '150px' }}
+                          size={"small"}>
                           Submit
                       </Button>
 
@@ -742,8 +773,8 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.showReport} size="large">
-                          Report bugs
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="exclamation" onClick={this.showReport} size="large">
+                          Report bug
                       </Button>
                   </div>
                                
