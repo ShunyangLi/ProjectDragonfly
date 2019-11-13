@@ -133,7 +133,8 @@ class HomePage extends React.Component {
             fileList: [],
             uploading: false,
             visible: false,
-            confirmLoading: false
+            confirmLoading: false,
+            report_info: '',
         }
     }
 
@@ -368,7 +369,35 @@ class HomePage extends React.Component {
         this.setState({
             reportText: false,
         })
-    }
+    };
+
+    reportEditor = (e) => {
+        this.setState({
+            report_info: e.target.value
+        });
+    };
+
+    handleReport = () => {
+        // let theText = document.getElementById(('words')
+        let report_info = this.state.report_info;
+        if (report_info === "") {
+            message.error("Please enter report information.");
+            return;
+        }
+        axios.post('http://127.0.0.1:5000/report/', {
+            params: {
+                "info": report_info,
+            }
+        }).then(dataRes => {
+            message.success("Report successfully!");
+            this.setState({
+                reportText: false
+            });
+        }).catch(function (error) {
+            // console.log(error);
+            message.error("Report error!");
+        });
+    };
     
     //change background color
     changeBackgroundColor = () => {
@@ -405,7 +434,6 @@ class HomePage extends React.Component {
         const { visible, confirmLoading } = this.state;
 
         // this is about bug report.
-        // const { reportText } = this.state;
         const { TextArea } = Input;
 
         // this is about css
@@ -671,16 +699,16 @@ class HomePage extends React.Component {
                   <Modal
                       title="Please report issues here"
                       visible={this.state.reportText}
-                      // onOK={this.handleCloseText}
+                      onOK={this.handleCloseText}
                       onCancel={this.handleCloseText}
                   >
 
-                      <TextArea rows={4} />
+                      <TextArea rows={6} id="reports"  onKeyUp={this.reportEditor} />
 
                       <Button
-                          // onClick={this.handleUpload}
-                          style={{ marginTop:'2%', marginBottom: '2%', width: '150px' }}
-                          size={"small"}
+                          onClick={this.handleReport}
+                          style={{ marginTop:'2%', marginBottom: '2%', width: '100%' }}
+                          size={"large"}
                       >
                           Submit
                       </Button>
@@ -714,7 +742,7 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.showReport} size="small">
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.showReport} size="large">
                           Report bugs
                       </Button>
                   </div>
