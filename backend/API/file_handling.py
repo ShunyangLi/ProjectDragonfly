@@ -156,8 +156,8 @@ class Bugreport(Resource):
         parser.add_argument('text')
         args = parser.parse_args()
         text = args.get('text')
-        email = 'comp6733@gmail.com'
-        msg = Message("Bug report", sender = 'comp6733@gmail.com', recipients = [email])
+        email = 'comp6733asdf@gmail.com'
+        msg = Message("Bug report", sender = 'comp6733asdf@gmail.com', recipients = [email])
         msg.body = text
         mail.send(msg)
         res = []
