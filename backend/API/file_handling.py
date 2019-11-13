@@ -12,11 +12,11 @@ from flask import Flask, jsonify, make_response, request
 from flask_mail import Mail, Message
 import base64
 from treetagger import TreeTagger # to install this, read README
+import docx # pip install python-docx
 
-treetaggerPath = '/Users/lsy/Desktop/cs/cs4920/ProjectDragonfly/treetagger' # install and fill this in
-
+#treetaggerPath = '/Users/lsy/Desktop/cs/cs4920/ProjectDragonfly/treetagger' # install and fill this in
 #treetaggerPath = '/Users/lilihuan/Desktop/TreeTagger/'
-# treetaggerPath = '/home/sam/Downloads/treetagger/' # install and fill this in
+treetaggerPath = '/home/sam/Downloads/treetagger/' # install and fill this in
 
 
 api = Api(app)
@@ -71,8 +71,6 @@ class Textarea(Resource):
             print(res)
             return make_response(jsonify({"res": res}), 200)
         
-
-
 upload = api.namespace('upload', description="Upload files API")
 @upload.route("/", strict_slashes=False)
 class Upload(Resource):
@@ -86,26 +84,40 @@ class Upload(Resource):
         #print(language)
         # check every files uploaded
         for file in files:
-            if file and allowed_file(file.filename):
+            #print(file.filename.rsplit('.', 1)[1].lower())
+            extension = file.filename.rsplit('.', 1)[1].lower()
+            text = ""
+            if (extension == 'docx'):
+                print('word document detected')
+                doc = docx.Document(file)
+                t = []
+                for el in doc.paragraphs:
+                    if el.text:
+                        t.append(el.text)
+                print(t)
+                for el in t:
+                    text += str(el)
+                print(text)
+            elif allowed_file(file.filename):
                 text = get_text(file.read())
-                id = generate_id()
-                t = {
-                    "_id": id,
-                    "info": text,
-                    "language": language
-                }
-                insert_tuple(t)
-                token = nltk.word_tokenize(text)
-                data = nltk.pos_tag(token)
-                res = []
-                for (word, word_type) in data:
-                    res.append({
-                        "word": word,
-                        "type": word_type
-                    })
-                return make_response(jsonify({"res": res}), 200)
             else:
                 abort(400, "Files type not allow")
+            id = generate_id()
+            t = {
+                "_id": id,
+                "info": text,
+                "language": language
+            }
+            insert_tuple(t)
+            token = nltk.word_tokenize(text)
+            data = nltk.pos_tag(token)
+            res = []
+            for (word, word_type) in data:
+                res.append({
+                    "word": word,
+                    "type": word_type
+                })
+            return make_response(jsonify({"res": res}), 200)
         abort(400, 'No files')
 
 
