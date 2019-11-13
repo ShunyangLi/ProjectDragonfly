@@ -47,29 +47,8 @@ class Textarea(Resource):
         text = args.get('text')
         language = args.get('language')
         #print(language)
-        if text is None:
-            abort(400, 'Missing text')
-        if language == "english":
-            token = nltk.word_tokenize(text)
-            data = nltk.pos_tag(token)
-            res = []
-            for (word, word_type) in data:
-                res.append({
-                    "word": word,
-                    "type": word_type
-                })
-            return make_response(jsonify({"res": res}), 200)
-        else:
-            tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
-            result = tt.tag(text)
-            res = []
-            for (word, word_type, x) in result:
-                res.append({
-                    "word": word,
-                    "type": word_type
-                })
-            print(res)
-            return make_response(jsonify({"res": res}), 200)
+        res = highlight(text, language)
+        return make_response(jsonify({"res": res}), 200)
         
 upload = api.namespace('upload', description="Upload files API")
 @upload.route("/", strict_slashes=False)
@@ -85,41 +64,47 @@ class Upload(Resource):
         # check every files uploaded
         for file in files:
             #print(file.filename.rsplit('.', 1)[1].lower())
+            # convert the file to text
             extension = file.filename.rsplit('.', 1)[1].lower()
             text = ""
             if (extension == 'docx'):
-                print('word document detected')
                 doc = docx.Document(file)
                 t = []
                 for el in doc.paragraphs:
                     if el.text:
                         t.append(el.text)
-                print(t)
                 for el in t:
                     text += str(el)
-                print(text)
             elif allowed_file(file.filename):
                 text = get_text(file.read())
             else:
                 abort(400, "Files type not allow")
-            id = generate_id()
-            t = {
-                "_id": id,
-                "info": text,
-                "language": language
-            }
-            insert_tuple(t)
-            token = nltk.word_tokenize(text)
-            data = nltk.pos_tag(token)
-            res = []
-            for (word, word_type) in data:
-                res.append({
-                    "word": word,
-                    "type": word_type
-                })
+            # highlight the text
+            res = highlight(text, language)
             return make_response(jsonify({"res": res}), 200)
         abort(400, 'No files')
 
+def highlight(text, language):
+    if (language == "english"):
+        token = nltk.word_tokenize(text)
+        data = nltk.pos_tag(token)
+        res = []
+        for (word, word_type) in data:
+            res.append({
+                "word": word,
+                "type": word_type
+            })
+        return res
+    else:
+        tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
+        result = tt.tag(text)
+        res = []
+        for (word, word_type, x) in result:
+            res.append({
+                "word": word,
+                "type": word_type
+            })
+        return res
 
 info = api.namespace('info', description="Get the info in db")
 @info.route('/', strict_slashes=False)
