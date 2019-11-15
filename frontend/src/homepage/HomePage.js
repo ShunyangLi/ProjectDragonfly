@@ -133,7 +133,9 @@ class HomePage extends React.Component {
             uploading: false,
             visible: false,
             confirmLoading: false
-        }
+        };
+
+        // this.AfterInit();
     }
 
     // show the upload file modal
@@ -141,6 +143,109 @@ class HomePage extends React.Component {
         this.setState({
             visible: true,
         });
+    };
+
+    // after init try to get the cookie's color
+    componentDidMount = () => {
+        let adverb = JSON.parse(window.localStorage.getItem('adverb'));
+        let noun = JSON.parse(window.localStorage.getItem('noun'));
+        let adposition = JSON.parse(window.localStorage.getItem('adposition'));
+        let determiner = JSON.parse(window.localStorage.getItem('determiner'));
+        let interjection = JSON.parse(window.localStorage.getItem('interjection'));
+        let particle = JSON.parse(window.localStorage.getItem('particle'));
+        let punctuation = JSON.parse(window.localStorage.getItem('punctuation'));
+        let verb = JSON.parse(window.localStorage.getItem('verb'));
+        let unknown = JSON.parse(window.localStorage.getItem('unknown'));
+        let conjunction = JSON.parse(window.localStorage.getItem('conjunction'));
+        let adjective = JSON.parse(window.localStorage.getItem('adjective'));
+
+        if (adverb !== null) {
+            this.setState({
+                adverb: {
+                    color: adverb
+                }
+            });
+        }
+
+        if (noun !== null) {
+            this.setState({
+                noun: {
+                    color: noun
+                }
+            })
+        }
+
+        if (adposition !== null) {
+            this.setState({
+                adposition: {
+                    color: adposition
+                }
+            })
+        }
+
+        if (determiner !== null) {
+            this.setState({
+                determiner: {
+                    color: determiner
+                }
+            })
+        }
+
+        if (interjection !== null) {
+            this.setState({
+                interjection: {
+                    color: interjection
+                }
+            })
+        }
+
+        if (particle !== null) {
+            this.setState({
+                particle: {
+                    color: particle
+                }
+            })
+        }
+
+        if (punctuation !== null) {
+            this.setState({
+                punctuation: {
+                    color: punctuation
+                }
+            })
+        }
+
+        if (verb !== null) {
+            this.setState({
+                verb: {
+                    color: verb
+                }
+            })
+        }
+
+        if (unknown !== null) {
+            this.setState({
+                unknown: {
+                    color: unknown
+                }
+            })
+        }
+
+        if (conjunction !== null) {
+            this.setState({
+                conjunction: {
+                    color: conjunction
+                }
+            })
+        }
+
+        if (adjective !== null) {
+            this.setState({
+                adjective: {
+                    color: adjective
+                }
+            })
+        }
     };
 
     // handle the upload file
@@ -164,12 +269,11 @@ class HomePage extends React.Component {
             processData: false,
             mimeTypes:"multipart/form-data",
             success: (res) => {
-                //console.log(res);
                 this.setState({
                     fileList: [],
                     uploading: false,
                     visible: false,
-                    res: res.data.res
+                    res: res.res
                 });
                 message.success('Your file upload success');
             },
@@ -225,7 +329,12 @@ class HomePage extends React.Component {
             [id]: {
                 color: color.rgb
             }
-        })
+        });
+
+        // because we need to store the color into the cookie, so we need to chanage here
+        // the id is the name of color, and the color.rgb is the rgb of the color
+        console.log(JSON.stringify(color.rgb));
+        window.localStorage.setItem(id, JSON.stringify(color.rgb));
     };
     
     sendEmail = () => {
@@ -362,13 +471,13 @@ class HomePage extends React.Component {
             reportText: true,
             itemData
         });
-    }
+    };
 
     changeFieldState = (status) =>{
         this.setState({
             visible:status
         })
-    }
+    };
 
     render() {
         // this part is about upload
