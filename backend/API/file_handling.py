@@ -12,12 +12,7 @@ from flask import Flask, jsonify, make_response, request
 from flask_mail import Mail, Message
 import base64
 from treetagger import TreeTagger # to install this, read README
-<<<<<<< HEAD
 treetaggerPath = '/Users/lsy/Desktop/cs/cs4920/ProjectDragonfly/treetagger' # install and fill this in
-=======
-treetaggerPath = '/Users/lilihuan/Desktop/TreeTagger/'
-# treetaggerPath = '/home/sam/Downloads/treetagger/' # install and fill this in
->>>>>>> 575ef72ec6236a82c9c76bda4d052bc79a51bac3
 
 api = Api(app)
 
