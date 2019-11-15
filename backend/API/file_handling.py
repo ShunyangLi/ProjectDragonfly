@@ -14,14 +14,6 @@ import base64
 from treetagger import TreeTagger # to install this, read README
 import docx # pip install python-docx
 
-<<<<<<< HEAD
-treetaggerPath = '/Users/lsy/Desktop/cs/cs4920/ProjectDragonfly/treetagger' # install and fill this in
-
-
-
-=======
-#treetaggerPath = '/Users/lsy/Desktop/cs/cs4920/ProjectDragonfly/treetagger' # install and fill this in
->>>>>>> fbc50fafe75243d4469cfe5ae77385808b93448d
 #treetaggerPath = '/Users/lilihuan/Desktop/TreeTagger/'
 treetaggerPath = '/home/sam/Downloads/treetagger/' # install and fill this in
 
@@ -45,77 +37,6 @@ def allowed_file(filename):
 textarea = api.namespace('textarea', description="upload text from textarea")
 @textarea.route("/", strict_slashes=False)
 class Textarea(Resource):
-<<<<<<< HEAD
-	@textarea.param('text', "The text")
-	def get(self):
-		parser = reqparse.RequestParser()
-		parser.add_argument('text', type=str, required=True)
-		parser.add_argument('language', type=str)
-		args = parser.parse_args()
-		text = args.get('text')
-		language = args.get('language')
-		#print(language)
-		if text is None:
-			abort(400, 'Missing text')
-		if language == "english":
-			token = nltk.word_tokenize(text)
-			data = nltk.pos_tag(token)
-			res = []
-			for (word, word_type) in data:
-				res.append({
-					"word": word,
-					"type": word_type
-				})
-			return make_response(jsonify({"res": res}), 200)
-		else:
-			tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
-			result = tt.tag(text)
-			res = []
-			for (word, word_type, x) in result:
-				res.append({
-					"word": word,
-					"type": word_type
-				})
-			print(res)
-			return make_response(jsonify({"res": res}), 200)
-		
-
-
-upload = api.namespace('upload', description="Upload files API")
-@upload.route("/", strict_slashes=False)
-class Upload(Resource):
-	def post(self):
-		parser = reqparse.RequestParser()
-		parser.add_argument('file', location='files', type=FileStorage, required=True, action='append')
-		parser.add_argument('language', type=str)
-		args = parser.parse_args()
-		files = args.get('file')
-		language = args.get('language')
-		#print(language)
-		# check every files uploaded
-		for file in files:
-			if file and allowed_file(file.filename):
-				text = get_text(file.read())
-				id = generate_id()
-				t = {
-					"_id": id,
-					"info": text,
-					"language": language
-				}
-				insert_tuple(t)
-				token = nltk.word_tokenize(text)
-				data = nltk.pos_tag(token)
-				res = []
-				for (word, word_type) in data:
-					res.append({
-						"word": word,
-						"type": word_type
-					})
-				return make_response(jsonify({"res": res}), 200)
-			else:
-				abort(400, "Files type not allow")
-		abort(400, 'No files')
-=======
     @textarea.param('text', "The text")
     def get(self):
         parser = reqparse.RequestParser()
@@ -161,7 +82,6 @@ class Upload(Resource):
             res = highlight(text, language)
             return make_response(jsonify({"res": res}), 200)
         abort(400, 'No files')
->>>>>>> fbc50fafe75243d4469cfe5ae77385808b93448d
 
 def highlight(text, language):
     if (language == "english"):
@@ -210,24 +130,6 @@ class Info(Resource):
 email = api.namespace('email', description="Email api")
 @email.route("/", strict_slashes=False)
 class Email(Resource):
-<<<<<<< HEAD
-	def post(self):
-		# receive the args: pdf file and target email
-		parser = reqparse.RequestParser()
-		parser.add_argument('pdf')
-		parser.add_argument('email')
-		args = parser.parse_args()
-		pdf = args.get('pdf')
-		email = args.get('email')
-		pdf = base64.b64decode(pdf)
-		#print(email)
-		#print(pdf)     
-		msg = Message("Here's your syntax highlighted file!", sender = 'comp6733@gmail.com', recipients = [email])
-		msg.attach(filename="file.pdf", content_type='application/pdf', data=pdf)
-		mail.send(msg)
-		res = []
-		return make_response(jsonify({"res": res}), 200)
-=======
     def post(self):
         # receive the args: pdf file and target email
         parser = reqparse.RequestParser()
@@ -261,4 +163,3 @@ class Bugreport(Resource):
         return make_response(jsonify({"res": res}), 200)
 
 
->>>>>>> fbc50fafe75243d4469cfe5ae77385808b93448d
