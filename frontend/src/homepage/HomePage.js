@@ -378,11 +378,6 @@ class HomePage extends React.Component {
 
     // this function is handle the input in div
     handleEditor = (e) => {
-        // if (this.state.number_text > 10) {
-        //     message.error("This is max number of words");
-        //
-        // }
-        //
 
         this.setState({
             number_text: e.target.textContent.length
@@ -471,11 +466,23 @@ class HomePage extends React.Component {
         let content = e.clipboardData.getData('Text');
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
+        if (input_text.length > 999) {
+            input_text = input_text.substring(0, 1000);
+            this.setState({
+                number_text: 1000
+            });
+            message.error("Your input more than 1000, we will the first 1000 chars");
+        } else {
+            this.setState({
+                number_text: input_text.length
+            });
+        }
         this.setState({
             text_input: input_text,
             res: []
         });
         this.forceUpdate();
+        this.updateText(this.state.text_input);
     };
 
     handleCloseModal = () => {
