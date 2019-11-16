@@ -399,6 +399,15 @@ class HomePage extends React.Component {
 
     };
 
+    // this part is for limit the numbers of input
+    handleKeyDown = (e) => {
+        if (this.state.number_text > 999) {
+            if (e.key !== 'Backspace') {
+                e.preventDefault();
+            }
+        }
+    };
+
     updateText = (input_text) => {
         axios.get('http://127.0.0.1:5000/textarea/', {
             params: {
@@ -492,12 +501,12 @@ class HomePage extends React.Component {
             reportText: false,
             bugText: ""
         })
-    }
+    };
     
     handleBugText = (e) => {
         //console.log(e.target.value);
         this.setState({bugText: e.target.value});
-    }
+    };
     
     reportBug = () => {
         var formData = new FormData();
@@ -909,7 +918,7 @@ class HomePage extends React.Component {
                   <Statistic title="characters" value={this.state.number_text} suffix="/ 1000" />
               </div>
               {/*  The first part is word container  */}
-              <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+              <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                     {switchword}
               </div>
 
