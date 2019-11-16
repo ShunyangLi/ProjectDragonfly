@@ -34,7 +34,7 @@ def get_info(id, text, language='english'):
 # get the tuple according to id
 def get_tuple(id):
     tuple = mycol.find_one({"_id": int(id)})
-    return tuple['info']
+    return tuple
 
 
 # insert tuple with id and info

@@ -18,7 +18,9 @@ let timer = null;
 class HomePage extends React.Component {
 
     constructor(props) {
+
         super(props);
+        // console.log(props.location);
         this.handleLanguage = this.handleLanguage.bind(this);
         // now need to into the state then pass them into other two part
         this.state = {
@@ -150,6 +152,40 @@ class HomePage extends React.Component {
 
     // after init try to get the cookie's color
     componentDidMount = () => {
+
+        let id = window.localStorage.getItem('id');
+        let parts = [];
+        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            parts[key] = value;
+        });
+
+        if (parts !== []) {
+            let share_id = parts['id'];
+            if (share_id !== undefined) {
+                id = share_id;
+            }
+        }
+
+        axios.get('http://127.0.0.1:5000/info/', {
+            params: {
+                "id": id,
+            }
+        }).then(dataRes => {
+            if (dataRes.data.res.length * 2 > 999) {
+                dataRes.data.res = dataRes.data.res.splice(0, 999);
+            }
+            this.setState({
+                res: dataRes.data.res,
+                id: dataRes.data.id,
+                number_text: dataRes.data.res.length * 2
+            });
+            window.localStorage.setItem('id', dataRes.data.id);
+            this.forceUpdate();
+        }).catch(function (error) {
+            console.log(error);
+        });
+
+
         let adverb = JSON.parse(window.localStorage.getItem('adverb'));
         let noun = JSON.parse(window.localStorage.getItem('noun'));
         let adposition = JSON.parse(window.localStorage.getItem('adposition'));
@@ -272,15 +308,19 @@ class HomePage extends React.Component {
             processData: false,
             mimeTypes:"multipart/form-data",
             success: (res) => {
-                // console.log(res.res);
+                if (res.res.length*2 > 999) {
+                    res.res = res.res.splice(0, 999);
+                }
                 this.setState({
                     fileList: [],
                     uploading: false,
                     visible: false,
                     res: res.res,
                     text_input: "",
-                    remove_switchword: false
+                    remove_switchword: false,
+                    id: res.id
                 });
+                window.localStorage.setItem('id', res.id);
                 message.success('Your file upload success');
             },
             error: () => {
@@ -377,7 +417,13 @@ class HomePage extends React.Component {
     };
 
     // this function is handle the input in div
+    // TODO need to fix
     handleEditor = (e) => {
+        // console.log(e.key);
+        // console.log(e.key);
+        if (e.key === 'Meta' || e.key === 'Control') {
+            return;
+        }
 
         this.setState({
             number_text: e.target.textContent.length
@@ -411,8 +457,10 @@ class HomePage extends React.Component {
             }
         }).then(dataRes => {
             this.setState({
-                res: dataRes.data.res
+                res: dataRes.data.res,
+                id: dataRes.data.id
             });
+            window.localStorage.setItem('id', dataRes.data.id);
             this.forceUpdate();
         }).catch(function (error) {
             console.log(error);
@@ -471,12 +519,13 @@ class HomePage extends React.Component {
             this.setState({
                 number_text: 1000
             });
-            message.error("Your input more than 1000, we will the first 1000 chars");
+            message.error("You can only input 1000 characters");
         } else {
             this.setState({
                 number_text: input_text.length
             });
         }
+
         this.setState({
             text_input: input_text,
             res: []
@@ -574,6 +623,18 @@ class HomePage extends React.Component {
         else{
             document.getElementById('words').className = "word_container";
         }
+    };
+
+    // handle share.
+    handleTwitterShare = () => {
+        let url = 'https://twitter.com/share?url=127.0.0.1:3000/?id=' + window.localStorage.getItem('id');
+        window.open(url);
+    };
+
+
+    handleFBShare = () => {
+        let url = 'https://www.facebook.com/sharer/sharer.php?u=127.0.0.1:3000/?id=' + window.localStorage.getItem('id');
+        window.open(url);
     };
 
     render() {
@@ -884,7 +945,7 @@ class HomePage extends React.Component {
                   {/* add the download button */}
 
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} onClick={this.handleDownload} shape="round" icon="download" size='large'>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} onClick={this.handleDownload} shape="round" icon="download" size='large'>
                           Download
                       </Button>
                   </div>
@@ -894,13 +955,13 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="upload" onClick={this.showModal} size="large">
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon="upload" onClick={this.showModal} size="large">
                           Upload
                       </Button>
                   </div>
                   
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon="arrow-right" onClick={this.sendEmail} size="large">
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon="arrow-right" onClick={this.sendEmail} size="large">
                           Email
                       </Button>
                       <input type="text" name="email" value={this.state.email} 
@@ -908,14 +969,25 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="exclamation" onClick={this.showReport} size="large">
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="bug" onClick={this.showReport} size="large">
                           Report bug
                       </Button>
                   </div>
                                
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '150px'}} shape="round" icon ="edit" onClick={this.changeBackgroundColor} size="large">
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="edit" onClick={this.changeBackgroundColor} size="large">
                           Background
+                      </Button>
+                  </div>
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="twitter" onClick={this.handleTwitterShare} size="large">
+                          Share on Twitter
+                      </Button>
+                  </div>
+
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="facebook" onClick={this.handleFBShare} size="large">
+                          Share on Facebook
                       </Button>
                   </div>
                   
