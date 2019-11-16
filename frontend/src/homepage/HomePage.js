@@ -6,7 +6,7 @@ import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
-import { Button, Modal, Select, Upload, Icon, message, Input } from 'antd';
+import { Button, Modal, Select, Upload, Icon, message, Input, Statistic } from 'antd';
 
 import "../index.css"
 
@@ -134,7 +134,8 @@ class HomePage extends React.Component {
             fileList: [],
             uploading: false,
             visible: false,
-            confirmLoading: false
+            confirmLoading: false,
+            number_text: 0
         };
 
         // this.AfterInit();
@@ -377,6 +378,15 @@ class HomePage extends React.Component {
 
     // this function is handle the input in div
     handleEditor = (e) => {
+        // if (this.state.number_text > 10) {
+        //     message.error("This is max number of words");
+        //
+        // }
+        //
+
+        this.setState({
+            number_text: e.target.textContent.length
+        });
         // if get timer, then clear it
         if (timer !== null) {
             clearTimeout(timer);
@@ -895,11 +905,14 @@ class HomePage extends React.Component {
                   
               </div>
 
-
+              <div>
+                  <Statistic title="characters" value={this.state.number_text} suffix="/ 1000" />
+              </div>
               {/*  The first part is word container  */}
               <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                     {switchword}
               </div>
+
           </div>
         );
     }
