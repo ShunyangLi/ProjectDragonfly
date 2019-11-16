@@ -171,8 +171,8 @@ class HomePage extends React.Component {
                 "id": id,
             }
         }).then(dataRes => {
-            if (dataRes.data.res.length * 2 > 999) {
-                dataRes.data.res = dataRes.data.res.splice(0, 999);
+            if (dataRes.data.res.length * 2 > 2499) {
+                dataRes.data.res = dataRes.data.res.splice(0, 2499);
             }
             this.setState({
                 res: dataRes.data.res,
@@ -308,8 +308,8 @@ class HomePage extends React.Component {
             processData: false,
             mimeTypes:"multipart/form-data",
             success: (res) => {
-                if (res.res.length*2 > 999) {
-                    res.res = res.res.splice(0, 999);
+                if (res.res.length*2 > 2499) {
+                    res.res = res.res.splice(0, 2499);
                 }
                 this.setState({
                     fileList: [],
@@ -442,7 +442,7 @@ class HomePage extends React.Component {
 
     // this part is for limit the numbers of input
     handleKeyDown = (e) => {
-        if (this.state.number_text > 999) {
+        if (this.state.number_text > 4999) {
             if (e.key !== 'Backspace') {
                 e.preventDefault();
             }
@@ -514,12 +514,12 @@ class HomePage extends React.Component {
         let content = e.clipboardData.getData('Text');
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
-        if (input_text.length > 999) {
-            input_text = input_text.substring(0, 1000);
+        if (input_text.length > 4999) {
+            input_text = input_text.substring(0, 5000);
             this.setState({
-                number_text: 1000
+                number_text:5000
             });
-            message.error("You can only input 1000 characters");
+            message.error("You can only input 5000 characters");
         } else {
             this.setState({
                 number_text: input_text.length
@@ -994,7 +994,7 @@ class HomePage extends React.Component {
               </div>
 
               <div>
-                  <Statistic title="characters" value={this.state.number_text} suffix="/ 1000" />
+                  <Statistic  value={this.state.number_text} suffix="/ 5000" />
               </div>
               {/*  The first part is word container  */}
               <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
