@@ -650,6 +650,14 @@ class HomePage extends React.Component {
         }
     };
 
+
+    //clear content
+    clearContent = () => {
+        
+        document.getElementById('words').textContent = "";
+        
+    };
+
     // handle share.
     handleTwitterShare = () => {
         let url = 'https://twitter.com/share?url=127.0.0.1:3000/?id=' + window.localStorage.getItem('id');
@@ -966,7 +974,8 @@ class HomePage extends React.Component {
                       </Button>
 
                   </Modal>
-                  
+                
+                                 
                   {/* add the download button */}
 
                   <div>
@@ -1004,6 +1013,15 @@ class HomePage extends React.Component {
                           Background
                       </Button>
                   </div>
+                               
+                               
+                  <div>
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="edit" onClick={this.clearContent} size="large">
+                          Clear
+                      </Button>
+                  </div>            
+                               
+           
                   <div>
                       <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="twitter" onClick={this.handleTwitterShare} size="large">
                           Share on Twitter
