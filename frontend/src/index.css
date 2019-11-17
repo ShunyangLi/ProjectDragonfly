@@ -14,7 +14,7 @@ code {
 
 /* the word container */
 .word_container {
-  width: 59%;
+  width: 67%;
   font-family: monospace;
   background: #FFFFFF;
   padding: 15px;
@@ -26,12 +26,12 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 1000px;
+  height: 1200px;
   overflow-y: auto;
 }
 
 .word_container2 {
-  width: 59%;
+  width: 67%;
   font-family: monospace;
   background: #2d2d2d;
   padding: 15px;
@@ -43,7 +43,7 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 1000px;
+  height: 1200px;
   overflow-y: auto;
 }
 
@@ -58,7 +58,7 @@ code {
 /* for the introduction */
 .intro {
   padding-top: 10px;
-  width: 40%;
+  width: 33%;
   float: right;
   padding-left: 20px;
   box-sizing: border-box;
