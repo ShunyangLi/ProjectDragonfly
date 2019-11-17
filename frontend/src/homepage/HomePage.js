@@ -477,6 +477,14 @@ class HomePage extends React.Component {
     };
 
     handleReset = () => {
+        // reset the timer
+        if (timer !== null) {
+            clearTimeout(timer);
+            timer = null;
+        }
+        timer = setTimeout(() => {
+            this.handleUpdate();
+        }, 3000);
         let html_input = document.getElementById('words').innerHTML;
         //console.log(html_input);
         html_input = html_input.replace(/<\/div\s*\\?>/g, "\n");
