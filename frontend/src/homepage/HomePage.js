@@ -661,6 +661,10 @@ class HomePage extends React.Component {
         });
         //this.forceUpdate();
         this.updateText(this.state.text_input);
+        
+        this.setState({
+            number_text:0
+        });
           
     };
 
