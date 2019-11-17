@@ -456,8 +456,17 @@ class HomePage extends React.Component {
                 "language": this.state.language
             }
         }).then(dataRes => {
+            var arr = dataRes.data.res;
+            //console.log(arr);
+            var res = [];
+            arr.forEach(function(el){
+                el.forEach(function(rl){
+                    res.push(rl);
+                });
+            });
+            //console.log(res);
             this.setState({
-                res: dataRes.data.res,
+                res: res,
                 id: dataRes.data.id
             });
             window.localStorage.setItem('id', dataRes.data.id);
@@ -469,7 +478,11 @@ class HomePage extends React.Component {
 
     handleReset = () => {
         let html_input = document.getElementById('words').innerHTML;
+        //console.log(html_input);
+        html_input = html_input.replace(/<\/div\s*\\?>/g, "\n");
+        html_input = html_input.replace(/<br\s*\\?>/g, "\n");
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
+        //console.log(input_text);
         this.setState({ remove_switchword: true });
         if (input_text !== "") {
             //console.log(this.state.res);
@@ -480,11 +493,15 @@ class HomePage extends React.Component {
         }
         this.updateText(input_text);
     };
-    
+
     // this is sam's update functions
     handleUpdate = () => {
         let html_input = document.getElementById('words').innerHTML;
+        //console.log(html_input);
+        html_input = html_input.replace(/<\/div\s*\\?>/g, "\n");
         let input_text = html_input.replace(/<[^>]*>?/gm, '');
+        //console.log(input_text);
+        this.setState({ remove_switchword: true });
         this.setState({
             res: [],
             text_input: ""
@@ -1014,6 +1031,8 @@ var SwitchWord = (props) => {
     let color = props.colors;
 
     switch (type) {
+        case (type.match(/^NEWLINE/) || {}).input:
+            return (<br></br>);
         case (type.match(/^VB*/) || type.match(/^VER*/)|| {}).input:
             return (<span id={props.id} style={{color: color.verb.background}}> {word}</span>);
         case (type.match(/^NN*/) || type.match(/^NOM/) || {}).input:
@@ -1032,10 +1051,12 @@ var SwitchWord = (props) => {
             return (<span id={props.id} style={{color: color.adjective.background}}> {word}</span>);
         case (type.match(/^TO*/) || type.match(/^PRP*/) || {}).input:
             return (<span id={props.id} style={{color: color.adposition.background}}> {word}</span>);
+        case (type.match(/^FS*/) || {}).input:
+            return (<span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
         case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || {}).input:
-            return (<span id={props.id} style={{color: color.unknown.background}}>{word}</span>);
+            return (<span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
         default:
-            return (<span id={props.id} style={{color: color.unknown.background}}> {word}</span>)
+            return (<span id={props.id} style={{color: color.unknown.background}}> {word}</span>);
     }
 };
 

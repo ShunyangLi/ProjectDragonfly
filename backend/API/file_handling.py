@@ -13,10 +13,10 @@ from flask_mail import Mail, Message
 import base64
 from treetagger import TreeTagger # to install this, read README
 import docx # pip install python-docx
+from nltk.tokenize import LineTokenizer
 
 #treetaggerPath = '/Users/lilihuan/Desktop/TreeTagger/'
-treetaggerPath = '/home/sam/Downloads/treetagger/' # install and fill this in
-
+treetaggerPath = '/home/sam/Downloads/tree-tagger/' # install and fill this in
 
 api = Api(app)
 
@@ -54,6 +54,7 @@ class Textarea(Resource):
 		language = args.get('language')
 		# make the tuple, and store it into database
 		id = insert_into_db(text, language)
+		#print(text)
 		# highlight the textarea
 		res = highlight(text, language)
 		return make_response(jsonify(res=res, id=id), 200)
@@ -95,26 +96,53 @@ class Upload(Resource):
 		abort(400, 'No files')
 
 def highlight(text, language):
-	if (language == "english"):
-		token = nltk.word_tokenize(text)
-		data = nltk.pos_tag(token)
-		res = []
-		for (word, word_type) in data:
-			res.append({
-				"word": word,
-				"type": word_type
-			})
-		return res
-	else:
-		tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
-		result = tt.tag(text)
-		res = []
-		for (word, word_type, x) in result:
-			res.append({
-				"word": word,
-				"type": word_type
-			})
-		return res
+    text = LineTokenizer(blanklines='keep').tokenize(text)
+    print(text)
+    if (language == "english"):
+        arr = []
+        count = 1
+        for el in text:
+            res = []
+            token = nltk.word_tokenize(el)
+            data = nltk.pos_tag(token)
+            for (word, word_type) in data:
+                res.append({
+                    "word": word,
+                    "type": word_type
+                })
+            # add the newline if it's not last line
+            if count != len(text):
+                res.append({
+                    "word": "NEWLINE",
+                    "type": "NEWLINE"
+                })
+            count += 1
+            arr.append(res)
+        return arr
+    else:
+        arr = []
+        count = 1
+        for el in text:
+            res = []
+            tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
+            result = tt.tag(el)
+            print(result)
+            if result[0][0] == '':
+                break
+            for (word, word_type, x) in result:
+                res.append({
+                    "word": word,
+                    "type": word_type
+                })
+            # add the newline if it's not last line
+            if count != len(text):
+                res.append({
+                    "word": "NEWLINE",
+                    "type": "NEWLINE"
+                })
+            count += 1
+            arr.append(res)
+        return arr
 
 info = api.namespace('info', description="Get the info in db")
 @info.route('/', strict_slashes=False)
