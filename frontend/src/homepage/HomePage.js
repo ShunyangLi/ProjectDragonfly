@@ -653,9 +653,15 @@ class HomePage extends React.Component {
 
     //clear content
     clearContent = () => {
-        
-        document.getElementById('words').textContent = "";
-        
+            
+        this.setState({ remove_switchword: true });
+        this.setState({
+            res: [],
+            text_input: ""
+        });
+        //this.forceUpdate();
+        this.updateText(this.state.text_input);
+          
     };
 
     // handle share.
