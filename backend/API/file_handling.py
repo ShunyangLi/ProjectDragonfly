@@ -14,11 +14,9 @@ import base64
 from treetagger import TreeTagger # to install this, read README
 import docx # pip install python-docx
 from nltk.tokenize import LineTokenizer
-
+api = Api(app)
 #treetaggerPath = '/Users/lilihuan/Desktop/TreeTagger/'
 treetaggerPath = '/home/sam/Downloads/tree-tagger/' # install and fill this in
-
-api = Api(app)
 
 target = 'static/files'
 if not os.path.isdir(target):
@@ -32,7 +30,6 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg'}
 def allowed_file(filename):
 	return '.' in filename and \
 			filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 def insert_into_db(text, language):
 	id = generate_id()
