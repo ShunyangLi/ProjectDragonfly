@@ -1016,7 +1016,7 @@ class HomePage extends React.Component {
                                
                                
                   <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="edit" onClick={this.clearContent} size="large">
+                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="arrow-left" onClick={this.clearContent} size="large">
                           Clear
                       </Button>
                   </div>            
