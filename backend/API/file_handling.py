@@ -99,19 +99,24 @@ def highlight(text, language):
         arr = []
         count = 1
         for el in text:
+            first = 0
             res = []
             token = nltk.word_tokenize(el)
             data = nltk.pos_tag(token)
             for (word, word_type) in data:
                 res.append({
                     "word": word,
-                    "type": word_type
+                    "type": word_type,
+                    "space": first
                 })
+                first = 1
+            first = 1
             # add the newline if it's not last line
             if count != len(text):
                 res.append({
                     "word": "NEWLINE",
-                    "type": "NEWLINE"
+                    "type": "NEWLINE",
+                    "space": 1
                 })
             count += 1
             arr.append(res)
@@ -120,6 +125,7 @@ def highlight(text, language):
         arr = []
         count = 1
         for el in text:
+            first = 0
             res = []
             tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
             result = tt.tag(el)
@@ -129,13 +135,17 @@ def highlight(text, language):
             for (word, word_type, x) in result:
                 res.append({
                     "word": word,
-                    "type": word_type
+                    "type": word_type,
+                    "space": first
                 })
+                first = 1
+            first = 1
             # add the newline if it's not last line
             if count != len(text):
                 res.append({
                     "word": "NEWLINE",
-                    "type": "NEWLINE"
+                    "type": "NEWLINE",
+                    "space": 1
                 })
             count += 1
             arr.append(res)

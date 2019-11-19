@@ -797,9 +797,11 @@ class HomePage extends React.Component {
                 },
             },
         });
+        
         var switchword = this.state.remove_switchword ? this.state.text_input : 
-            this.state.res.map((words, index) => (
-              <SwitchWord key={index}{...words} colors={styles} id={index}/>));
+            this.state.res.map(function(words, index) {
+                  return <SwitchWord key={index}{...words} colors={styles} id={index}/>
+              });
         
         return (
           <div>
@@ -1065,34 +1067,46 @@ var SwitchWord = (props) => {
     let type = props.type;
     let word = props.word;
     let color = props.colors;
-
+    let space = props.space
+    
     switch (type) {
         case (type.match(/^NEWLINE/) || {}).input:
             return (<br></br>);
         case (type.match(/^VB*/) || type.match(/^VER*/)|| {}).input:
-            return (<span id={props.id} style={{color: color.verb.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.verb.background}}> {word}</span> :
+                 <span id={props.id} style={{color: color.verb.background}}>{word}</span>);
         case (type.match(/^NN*/) || type.match(/^NOM/) || {}).input:
-            return (<span id={props.id} style={{color: color.noun.background}}> {word}</span> );
+            return (space === 1 ? <span id={props.id} style={{color: color.noun.background}}> {word}</span> :
+                <span id={props.id} style={{color: color.noun.background}}>{word}</span> );
         case (type.match(/^RB*/) || type.match(/^ADV*/) || {}).input:
-            return (<span id={props.id} style={{color: color.adverb.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.adverb.background}}> {word}</span>:
+                <span id={props.id} style={{color: color.adverb.background}}>{word}</span>);
         case (type.match(/^DT/) || type.match(/^DET*/) || {}).input:
-            return (<span id={props.id} style={{color: color.determiner.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.determiner.background}}> {word}</span>:
+                <span id={props.id} style={{color: color.determiner.background}}>{word}</span>);
         case (type.match(/^UH/) || type.match(/^INT*/) ||{}).input:
-            return (<span id={props.id} style={{color: color.interjection.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.interjection.background}}> {word}</span>:
+                <span id={props.id} style={{color: color.interjection.background}}>{word}</span>);
         case (type.match(/^RP/) || {}).input:
-            return (<span id={props.id} style={{color: color.particle.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.particle.background}}> {word}</span>:
+                <span id={props.id} style={{color: color.particle.background}}>{word}</span>);
         case (type.match(/^CC/) || type.match(/^KON*/) ||{}).input:
-            return (<span id={props.id} style={{color: color.conjunction.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.conjunction.background}}> {word}</span>:
+                <span id={props.id} style={{color: color.conjunction.background}}>{word}</span>);
         case (type.match(/^JJ*|^PR*/) || type.match(/^ADJ*/) || {}).input:
-            return (<span id={props.id} style={{color: color.adjective.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.adjective.background}}> {word}</span>:
+                <span id={props.id} style={{color: color.adjective.background}}>{word}</span>);
         case (type.match(/^TO*/) || type.match(/^PRP*/) || {}).input:
-            return (<span id={props.id} style={{color: color.adposition.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.adposition.background}}> {word}</span> : 
+                <span id={props.id} style={{color: color.adposition.background}}>{word}</span>);
         case (type.match(/^FS*/) || {}).input:
-            return (<span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.punctuation.background}}>{word}</span>:
+                <span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
         case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || {}).input:
             return (<span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
         default:
-            return (<span id={props.id} style={{color: color.unknown.background}}> {word}</span>);
+            return (space === 1 ? <span id={props.id} style={{color: color.unknown.background}}> {word}</span>:
+                <span id={props.id} style={{color: color.unknown.background}}>{word}</span>);
     }
 };
 
