@@ -837,7 +837,6 @@ class HomePage extends React.Component {
 
               {/* The second part is tools container */}
               <div className="intro">
-                  Hello this is the introduction about English highlight.
                   {/* This part is for adverb color picker */}
                   <div>
                       <div style={ styles.swatch } onClick={ this.handleClick }>
@@ -1072,37 +1071,31 @@ var SwitchWord = (props) => {
     switch (type) {
         case (type.match(/^NEWLINE/) || {}).input:
             return (<br></br>);
-        case (type.match(/^VB*/) || type.match(/^VER*/)|| {}).input:
+        case (type.match(/^VB*/) || {}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.verb.background}}> {word}</span> :
                  <span id={props.id} style={{color: color.verb.background}}>{word}</span>);
-        case (type.match(/^NN*/) || type.match(/^NOM/) || {}).input:
+        case (type.match(/^NN*/)  || {}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.noun.background}}> {word}</span> :
                 <span id={props.id} style={{color: color.noun.background}}>{word}</span> );
-        case (type.match(/^RB*/) || type.match(/^ADV*/) || {}).input:
+        case (type.match(/^RB*/) || {}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.adverb.background}}> {word}</span>:
                 <span id={props.id} style={{color: color.adverb.background}}>{word}</span>);
-        case (type.match(/^DT/) || type.match(/^DET*/) || {}).input:
+        case (type.match(/^DT/)  || {}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.determiner.background}}> {word}</span>:
                 <span id={props.id} style={{color: color.determiner.background}}>{word}</span>);
-        case (type.match(/^UH/) || type.match(/^INT*/) ||{}).input:
+        case (type.match(/^UH/)  ||{}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.interjection.background}}> {word}</span>:
                 <span id={props.id} style={{color: color.interjection.background}}>{word}</span>);
         case (type.match(/^RP/) || {}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.particle.background}}> {word}</span>:
                 <span id={props.id} style={{color: color.particle.background}}>{word}</span>);
-        case (type.match(/^CC/) || type.match(/^KON*/) ||{}).input:
+        case (type.match(/^CC/) || type.match(/^IN/)  ||{}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.conjunction.background}}> {word}</span>:
                 <span id={props.id} style={{color: color.conjunction.background}}>{word}</span>);
-        case (type.match(/^JJ*|^PR*/) || type.match(/^ADJ*/) || {}).input:
+        case (type.match(/^JJ*/) || {}).input:
             return (space === 1 ? <span id={props.id} style={{color: color.adjective.background}}> {word}</span>:
                 <span id={props.id} style={{color: color.adjective.background}}>{word}</span>);
-        case (type.match(/^TO*/) || type.match(/^PRP*/) || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.adposition.background}}> {word}</span> : 
-                <span id={props.id} style={{color: color.adposition.background}}>{word}</span>);
-        case (type.match(/^FS*/) || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.punctuation.background}}>{word}</span>:
-                <span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
-        case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || {}).input:
+        case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || type.match(/^SENT/) || type.match(/^PUNCTUATION/) || {}).input:
             return (<span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
         default:
             return (space === 1 ? <span id={props.id} style={{color: color.unknown.background}}> {word}</span>:

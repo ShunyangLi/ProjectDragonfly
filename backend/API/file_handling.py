@@ -104,6 +104,8 @@ def highlight(text, language):
             token = nltk.word_tokenize(el)
             data = nltk.pos_tag(token)
             for (word, word_type) in data:
+                print(word)
+                print(word_type)
                 res.append({
                     "word": word,
                     "type": word_type,
@@ -121,7 +123,57 @@ def highlight(text, language):
             count += 1
             arr.append(res)
         return arr
-    else:
+    elif language == "spanish":
+        arr = []
+        count = 1
+        for el in text:
+            first = 0
+            res = []
+            tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
+            result = tt.tag(el)
+            if result[0][0] == '':
+                break
+            for (word, word_type, x) in result:
+                # map from their tagging syntax to treetag syntax
+                # so frontend displays colors correctly
+                if word_type == "ADV":
+                    word_type = "RB"
+                elif word_type == "NC" or word_type == "NMEA" or word_type == "NP":
+                    word_type = "NN"
+                elif word_type == "ITJN":
+                    word_type = "UH"
+                elif word_type == "SE":
+                    word_type = "RP"
+                elif word_type == "FS":
+                    word_type = "PUNCTUATION"
+                elif word_type[0] == "V":
+                    word_type = "VB" 
+                elif word_type[:2] == "CC":
+                    word_type = "CC" 
+                elif word_type[:2] == "CS":
+                    word_type = "CC"
+                elif word_type == "ADJ":
+                    word_type = "JJ"
+                else:
+                    word_type = "UNKNOWN"
+                res.append({
+                    "word": word,
+                    "type": word_type,
+                    "space": first
+                })
+                first = 1
+            first = 1
+            # add the newline if it's not last line
+            if count != len(text):
+                res.append({
+                    "word": "NEWLINE",
+                    "type": "NEWLINE",
+                    "space": 1
+                })
+            count += 1
+            arr.append(res)
+        return arr
+    else: #french
         arr = []
         count = 1
         for el in text:
@@ -133,6 +185,26 @@ def highlight(text, language):
             if result[0][0] == '':
                 break
             for (word, word_type, x) in result:
+                # map from their tagging syntax to treetag syntax
+                # so frontend displays colors correctly
+                print(word)
+                print(word_type)
+                if word_type == "ADV":
+                    word_type = "RB"
+                elif word_type == "NOM" or word_type == "NP" or word_type[:3] == "PRO":
+                    word_type = "NN"
+                elif word_type == "INT":
+                    word_type = "UH"
+                elif word_type == "PUN" or word_type == "SENT":
+                    word_type = "PUNCTUATION"
+                elif word_type[:3] == "VER":
+                    word_type = "VB" 
+                elif word_type == "KON":
+                    word_type = "CC" 
+                elif word_type == "ADJ":
+                    word_type = "JJ"
+                else:
+                    word_type = "UNKNOWN"
                 res.append({
                     "word": word,
                     "type": word_type,
