@@ -120,6 +120,22 @@ class HomePage extends React.Component {
                     a: '1'
                 }
             },
+            custom: {
+                color: {
+                    r: '0',
+                    g: '0',
+                    b: '0',
+                    a: '1'
+                }
+            },
+            black: {
+                color: {
+                    r: '255',
+                    g: '255',
+                    b: '255',
+                    a: '1'
+                }
+            },
             adverbDisplay: false,
             nounDisplay: false,
             adpositionDisplay: false,
@@ -131,13 +147,16 @@ class HomePage extends React.Component {
             unknownDisplay: false,
             conjunctionDisplay: false,
             adjectiveDisplay: false,
+            customDisplay: false,
             displayColorPicker: false,
             current_id: '',
             fileList: [],
             uploading: false,
             visible: false,
             confirmLoading: false,
-            number_text: 0
+            number_text: 0,
+            tags: ['adverb', 'noun', 'adposition', 'determiner', 'interjection', 'particle','punctuation', 'verb', 'unknown', 'conjunction', 'adjective'],
+            custom_tag: 'adverb',
         };
 
         // this.AfterInit();
@@ -680,6 +699,39 @@ class HomePage extends React.Component {
         window.open(url);
     };
 
+    handleCustomTag = (value) => {
+        this.setState({
+            custom_tag: value
+        })
+    };
+
+    handleCustomChangeColor = (color) => {
+        // set for the selected color
+        let id = this.state.custom_tag;
+        this.setState({
+            [id]: {
+                color: color.rgb
+            },
+            custom: {
+                color: color.rgb
+            }
+        });
+        // window.localStorage.setItem(id, JSON.stringify(color.rgb));
+        // then change all the other color into black
+        let others = this.state.tags;
+        for (let i = 0; i < others.length; i ++) {
+            let tag = others[i];
+            console.log(tag);
+            if (tag !== id) {
+                this.setState({
+                    [tag]: {
+                        color: this.state.black.color
+                    }
+                })
+            }
+        }
+    };
+
     render() {
         // this part is about upload
         const { uploading, fileList } = this.state;
@@ -783,6 +835,12 @@ class HomePage extends React.Component {
                     height: '14px',
                     borderRadius: '2px',
                     background: `rgba(${ this.state.adjective.color.r }, ${ this.state.adjective.color.g }, ${ this.state.adjective.color.b }, ${ this.state.adjective.color.a })`,
+                },
+                custom: {
+                    width: '36px',
+                    height: '14px',
+                    borderRadius: '2px',
+                    background: `rgba(${ this.state.custom.color.r }, ${ this.state.custom.color.g }, ${ this.state.custom.color.b }, ${ this.state.custom.color.a })`,
                 },
                 popover: {
                     position: 'absolute',
@@ -960,7 +1018,26 @@ class HomePage extends React.Component {
                       </div> : null }
                       <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adjective</font>
                   </div>
-                    
+
+                  <div>
+                      <Select defaultValue="Adverb" style={{ width: 120 }} onChange={this.handleCustomTag}>
+                          <Option value="adverb">Adverb</Option>
+                          <Option value="noun">Noun</Option>
+                      </Select>
+
+                      {/*/!* custom *!/*/}
+                      <div>
+                          <div style={ styles.swatch } onClick={ this.handleClick }>
+                              <div style={ styles.custom } id="custom" />
+                          </div>
+                          { this.state.customDisplay ? <div style={ styles.popover }>
+                              <div style={ styles.cover } onClick={ this.handleClose }/>
+                              <SketchPicker color={ this.state.custom.color } onChange={ this.handleCustomChangeColor} />
+                          </div> : null }
+                          <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Custom</font>
+                      </div>
+                  </div>
+
                   <Select defaultValue="English" style={{ width: 120 }} onChange={this.handleLanguage}>
                     <Option value="english">English</Option>
                     <Option value="spanish">Spanish</Option>
