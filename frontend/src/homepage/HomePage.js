@@ -156,7 +156,7 @@ class HomePage extends React.Component {
             confirmLoading: false,
             number_text: 0,
             tags: ['adverb', 'noun', 'adposition', 'determiner', 'interjection', 'particle','punctuation', 'verb', 'unknown', 'conjunction', 'adjective'],
-            custom_tag: 'adverb',
+            custom_tag: 'verb',
         };
 
         // this.AfterInit();
@@ -898,7 +898,7 @@ class HomePage extends React.Component {
                   {/* This part is for adverb color picker */}
                   <div>
                       <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.adverb } id="adverb" />
+                          <div style={ styles.adverb } id="verb" />
                       </div>
                       { this.state.adverbDisplay ? <div style={ styles.popover }>
                           <div style={ styles.cover } onClick={ this.handleClose }/>
@@ -1020,8 +1020,8 @@ class HomePage extends React.Component {
                   </div>
 
                   <div>
-                      <Select defaultValue="Adverb" style={{ width: 120 }} onChange={this.handleCustomTag}>
-                          <Option value="adverb">Adverb</Option>
+                      <Select defaultValue="verb" style={{ width: 120 }} onChange={this.handleCustomTag}>
+                          <Option value="verb">Verb</Option>
                           <Option value="noun">Noun</Option>
                       </Select>
 
