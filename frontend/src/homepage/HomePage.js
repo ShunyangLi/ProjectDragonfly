@@ -6,12 +6,14 @@ import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
-import { Button, Modal, Select, Upload, Icon, message, Input, Statistic } from 'antd';
+import { Button, Modal, Select, Upload, Icon, message, Input, Statistic, Layout, Menu, Drawer } from 'antd';
 
 import "../index.css"
 
+const { Header, Content, Footer, Sider } = Layout;
 const { Dragger } = Upload;
 const { Option } = Select;
+const { SubMenu } = Menu
 let timer = null;
 
 // this is home page, we need contain the highlight part and tools part
@@ -155,8 +157,11 @@ class HomePage extends React.Component {
             visible: false,
             confirmLoading: false,
             number_text: 0,
-            tags: ['adverb', 'noun', 'adposition', 'determiner', 'interjection', 'particle','punctuation', 'verb', 'unknown', 'conjunction', 'adjective'],
+            tags: ['adverb', 'noun', 'adposition', 'determiner', 'interjection', 'particle', 'punctuation', 'verb', 'unknown', 'conjunction', 'adjective'],
             custom_tag: 'adverb',
+            collapsed: true,
+            colorpicker: false,
+            lighttheme: false,
         };
 
         // this.AfterInit();
@@ -169,12 +174,16 @@ class HomePage extends React.Component {
         });
     };
 
+    onCollapse = collapsed => {
+        this.setState({ collapsed });
+    };
+
     // after init try to get the cookie's color
     componentDidMount = () => {
 
         let id = window.localStorage.getItem('id');
         let parts = [];
-        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
             parts[key] = value;
         });
 
@@ -325,9 +334,9 @@ class HomePage extends React.Component {
             contentType: false,
             cache: false,
             processData: false,
-            mimeTypes:"multipart/form-data",
+            mimeTypes: "multipart/form-data",
             success: (res) => {
-                if (res.res.length*2 > 2499) {
+                if (res.res.length * 2 > 2499) {
                     res.res = res.res.splice(0, 2499);
                 }
                 this.setState({
@@ -364,7 +373,7 @@ class HomePage extends React.Component {
     // componentWillUnmount() {
     //     this._isMounted = false;
     // }
-        
+
     // this is for handle open the color picker
     handleClick = (e) => {
         let id = e.target.id;
@@ -401,7 +410,7 @@ class HomePage extends React.Component {
         console.log(JSON.stringify(color.rgb));
         window.localStorage.setItem(id, JSON.stringify(color.rgb));
     };
-    
+
     sendEmail = () => {
         var input = document.getElementById('words');
         html2canvas(input)
@@ -423,7 +432,7 @@ class HomePage extends React.Component {
                     contentType: false,
                     cache: false,
                     processData: false,
-                    mimeTypes:"multipart/form-data",
+                    mimeTypes: "multipart/form-data",
                     success: (res) => {
                         //console.log(res);
                         message.success('Email was sent!');
@@ -478,8 +487,8 @@ class HomePage extends React.Component {
             var arr = dataRes.data.res;
             //console.log(arr);
             var res = [];
-            arr.forEach(function(el){
-                el.forEach(function(rl){
+            arr.forEach(function (el) {
+                el.forEach(function (rl) {
                     res.push(rl);
                 });
             });
@@ -561,7 +570,7 @@ class HomePage extends React.Component {
         if (input_text.length > 4999) {
             input_text = input_text.substring(0, 5000);
             this.setState({
-                number_text:5000
+                number_text: 5000
             });
             message.error("You can only input 5000 characters");
         } else {
@@ -583,9 +592,9 @@ class HomePage extends React.Component {
             visible: false
         })
     };
-    
-    handleEmailChange(event) {  
-        this.setState({email: event.target.value})
+
+    handleEmailChange(event) {
+        this.setState({ email: event.target.value })
         //console.log(this.state.email);
     }
 
@@ -602,16 +611,35 @@ class HomePage extends React.Component {
             bugText: ""
         })
     };
-    
+
+    handleColorPicker = (e) => {
+        //console.log(e.target.value);
+        this.setState({ colorpicker: true });
+    };
+
+    handleClosePicker = () => {
+        this.setState({
+            colorpicker: false,
+
+        })
+    };
+
+    handleCloseText = () => {
+        this.setState({
+            reportText: false,
+            bugText: ""
+        })
+    };
+
     handleBugText = (e) => {
         //console.log(e.target.value);
-        this.setState({bugText: e.target.value});
+        this.setState({ bugText: e.target.value });
     };
-    
+
     reportBug = () => {
         var formData = new FormData();
         formData.append('text', this.state.bugText);
-        
+
         reqwest({
             url: 'http://127.0.0.1:5000/bugreport/',
             method: 'POST',
@@ -619,7 +647,7 @@ class HomePage extends React.Component {
             contentType: false,
             cache: false,
             processData: false,
-            mimeTypes:"multipart/form-data",
+            mimeTypes: "multipart/form-data",
             success: (res) => {
                 //console.log(res);
                 message.success('Bug report was sent!');
@@ -658,13 +686,16 @@ class HomePage extends React.Component {
             message.error("Report error!");
         });
     };
-    
+
     //change background color
     changeBackgroundColor = () => {
-        if(document.getElementById('words').className === "word_container"){
+        this.setState({
+            lighttheme: !this.state.lighttheme
+        })
+        if (document.getElementById('words').className === "word_container") {
             document.getElementById('words').className = "word_container2";
         }
-        else{
+        else {
             document.getElementById('words').className = "word_container";
         }
     };
@@ -672,7 +703,7 @@ class HomePage extends React.Component {
 
     //clear content
     clearContent = () => {
-            
+
         this.setState({ remove_switchword: true });
         this.setState({
             res: [],
@@ -680,11 +711,11 @@ class HomePage extends React.Component {
         });
         //this.forceUpdate();
         this.updateText(this.state.text_input);
-        
+
         this.setState({
-            number_text:0
+            number_text: 0
         });
-          
+
     };
 
     // handle share.
@@ -719,7 +750,7 @@ class HomePage extends React.Component {
         // window.localStorage.setItem(id, JSON.stringify(color.rgb));
         // then change all the other color into black
         let others = this.state.tags;
-        for (let i = 0; i < others.length; i ++) {
+        for (let i = 0; i < others.length; i++) {
             let tag = others[i];
             console.log(tag);
             if (tag !== id) {
@@ -766,25 +797,25 @@ class HomePage extends React.Component {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.adverb.color.r }, ${ this.state.adverb.color.g }, ${ this.state.adverb.color.b }, ${ this.state.adverb.color.a })`,
+                    background: `rgba(${this.state.adverb.color.r}, ${this.state.adverb.color.g}, ${this.state.adverb.color.b}, ${this.state.adverb.color.a})`,
                 },
                 noun: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.noun.color.r }, ${ this.state.noun.color.g }, ${ this.state.noun.color.b }, ${ this.state.noun.color.a })`,
+                    background: `rgba(${this.state.noun.color.r}, ${this.state.noun.color.g}, ${this.state.noun.color.b}, ${this.state.noun.color.a})`,
                 },
                 adposition: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.adposition.color.r }, ${ this.state.adposition.color.g }, ${ this.state.adposition.color.b }, ${ this.state.adposition.color.a })`,
+                    background: `rgba(${this.state.adposition.color.r}, ${this.state.adposition.color.g}, ${this.state.adposition.color.b}, ${this.state.adposition.color.a})`,
                 },
                 determiner: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.determiner.color.r }, ${ this.state.determiner.color.g }, ${ this.state.determiner.color.b }, ${ this.state.determiner.color.a })`,
+                    background: `rgba(${this.state.determiner.color.r}, ${this.state.determiner.color.g}, ${this.state.determiner.color.b}, ${this.state.determiner.color.a})`,
                 },
                 swatch: {
                     padding: '2px',
@@ -798,49 +829,49 @@ class HomePage extends React.Component {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.interjection.color.r }, ${ this.state.interjection.color.g }, ${ this.state.interjection.color.b }, ${ this.state.interjection.color.a })`,
+                    background: `rgba(${this.state.interjection.color.r}, ${this.state.interjection.color.g}, ${this.state.interjection.color.b}, ${this.state.interjection.color.a})`,
                 },
                 particle: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.particle.color.r }, ${ this.state.particle.color.g }, ${ this.state.particle.color.b }, ${ this.state.particle.color.a })`,
+                    background: `rgba(${this.state.particle.color.r}, ${this.state.particle.color.g}, ${this.state.particle.color.b}, ${this.state.particle.color.a})`,
                 },
                 punctuation: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.punctuation.color.r }, ${ this.state.punctuation.color.g }, ${ this.state.punctuation.color.b }, ${ this.state.punctuation.color.a })`,
+                    background: `rgba(${this.state.punctuation.color.r}, ${this.state.punctuation.color.g}, ${this.state.punctuation.color.b}, ${this.state.punctuation.color.a})`,
                 },
                 verb: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.verb.color.r }, ${ this.state.verb.color.g }, ${ this.state.verb.color.b }, ${ this.state.verb.color.a })`,
+                    background: `rgba(${this.state.verb.color.r}, ${this.state.verb.color.g}, ${this.state.verb.color.b}, ${this.state.verb.color.a})`,
                 },
                 unknown: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.unknown.color.r }, ${ this.state.unknown.color.g }, ${ this.state.unknown.color.b }, ${ this.state.unknown.color.a })`,
+                    background: `rgba(${this.state.unknown.color.r}, ${this.state.unknown.color.g}, ${this.state.unknown.color.b}, ${this.state.unknown.color.a})`,
                 },
                 conjunction: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.conjunction.color.r }, ${ this.state.conjunction.color.g }, ${ this.state.conjunction.color.b }, ${ this.state.conjunction.color.a })`,
+                    background: `rgba(${this.state.conjunction.color.r}, ${this.state.conjunction.color.g}, ${this.state.conjunction.color.b}, ${this.state.conjunction.color.a})`,
                 },
                 adjective: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.adjective.color.r }, ${ this.state.adjective.color.g }, ${ this.state.adjective.color.b }, ${ this.state.adjective.color.a })`,
+                    background: `rgba(${this.state.adjective.color.r}, ${this.state.adjective.color.g}, ${this.state.adjective.color.b}, ${this.state.adjective.color.a})`,
                 },
                 custom: {
                     width: '36px',
                     height: '14px',
                     borderRadius: '2px',
-                    background: `rgba(${ this.state.custom.color.r }, ${ this.state.custom.color.g }, ${ this.state.custom.color.b }, ${ this.state.custom.color.a })`,
+                    background: `rgba(${this.state.custom.color.r}, ${this.state.custom.color.g}, ${this.state.custom.color.b}, ${this.state.custom.color.a})`,
                 },
                 popover: {
                     position: 'absolute',
@@ -855,284 +886,313 @@ class HomePage extends React.Component {
                 },
             },
         });
-        
-        var switchword = this.state.remove_switchword ? this.state.text_input : 
-            this.state.res.map(function(words, index) {
-                  return <SwitchWord key={index}{...words} colors={styles} id={index}/>
-              });
-        
+
+        var switchword = this.state.remove_switchword ? this.state.text_input :
+            this.state.res.map(function (words, index) {
+                return <SwitchWord key={index}{...words} colors={styles} id={index} />
+            });
+
         return (
-          <div>
-              {/* upload files */}
-              <Modal
-                  title="Title"
-                  visible={visible}
-                  onOk={this.handleCloseModal}
-                  confirmLoading={confirmLoading}
-                  onCancel={this.handleCloseModal}
-              >
+            <div>
+                <Layout>
+                    <Sider theme={this.state.lighttheme ? "light" : "dark"} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}
+                        style={{
+                            overflow: 'auto',
+                            height: '100vh',
+                            position: 'fixed',
+                            left: 0,
+                        }}
+                    >
+                        <div className="logo" />
+                        <Menu theme={this.state.lighttheme ? "light" : "dark"} mode="inline" defaultSelectedKeys={['4']}>
 
-                  <Dragger {...props}>
-                      <p className="ant-upload-drag-icon">
-                          <Icon type="inbox" />
-                      </p>
-                      <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                      <p className="ant-upload-hint">
-                          Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                          band files
-                      </p>
-                  </Dragger>
-                  <Button
-                      size={"large"}
-                      onClick={this.handleUpload}
-                      disabled={fileList.length === 0 }
-                      loading={uploading}
-                      style={{ marginTop: 16, width: '100%' }}
-                  >
-                      {uploading ? 'Uploading' : 'Start Upload'}
-                  </Button>
-              </Modal>
+                            <Menu.Item key="colorpicker" onClick={this.handleColorPicker} >
+                                <Icon type="highlight" />
+                                <span className="nav-text">ColorPicker</span>
 
-              {/* The second part is tools container */}
-              <div className="intro">
-                  {/* This part is for adverb color picker */}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.adverb } id="adverb" />
-                      </div>
-                      { this.state.adverbDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.adverb.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adverb</font>
-                  </div>
+                            </Menu.Item>
 
-                  {/* noun */}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.noun } id="noun" />
-                      </div>
-                      { this.state.nounDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.noun.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Noun</font>
-                  </div>
-
-                  {/* adposition */ } 
-                  
-
-                  {/*/!* determiner *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.determiner } id="determiner"/>
-                      </div>
-                      { this.state.determinerDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.determiner.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Determiner</font>
-                  </div>
+                            <SubMenu key="langugage" title={
+                                <span>
+                                    <Icon type="global" />
+                                    <span>Language</span>
+                                </span>
+                            }>
+                                <Select defaultValue="English" style={{ width: 120 }} onChange={this.handleLanguage}>
+                                    <Option value="english">English</Option>
+                                    <Option value="spanish">Spanish</Option>
+                                    <Option value="french">French</Option>
+                                </Select>
+                            </SubMenu>
 
 
-                  {/*/!* interjection *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.interjection } id="interjection" />
-                      </div>
-                      { this.state.interjectionDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.interjection.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Interjection</font>
-                  </div>
 
-                  {/*/!* particle *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.particle } id="particle" />
-                      </div>
-                      { this.state.particleDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.particle.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Particle</font>
-                  </div>
+                            <Modal title="Color Picker"
+                                visible={this.state.colorpicker}
+                                onCancel={this.handleClosePicker}
+                                onOkay={this.handleClosePicker}> <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.adverb} id="adverb" />
+                                    </div>
+                                    {this.state.adverbDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.adverb.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adverb</font>
+                                </div>
 
-                  {/*/!* punctuation *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.punctuation } id="punctuation" />
-                      </div>
-                      { this.state.punctuationDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.punctuation.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Punctuation</font>
-                  </div>
+                                {/* noun */}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.noun} id="noun" />
+                                    </div>
+                                    {this.state.nounDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.noun.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Noun</font>
+                                </div>
 
-                  {/*/!* verb *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.verb } id="verb" />
-                      </div>
-                      { this.state.verbDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.verb.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Verb</font>
-                  </div>
+                                {/* adposition */}
 
-                  {/*/!* unknown *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.unknown } id="unknown" />
-                      </div>
-                      { this.state.unknownDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.unknown.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Unknown</font>
-                  </div>
 
-                  {/*/!* conjunction *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.conjunction } id="conjunction" />
-                      </div>
-                      { this.state.conjunctionDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.conjunction.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Conjunction</font>
-                  </div>
+                                {/*/!* determiner *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.determiner} id="determiner" />
+                                    </div>
+                                    {this.state.determinerDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.determiner.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Determiner</font>
+                                </div>
 
-                  {/*/!* adjective *!/*/}
-                  <div>
-                      <div style={ styles.swatch } onClick={ this.handleClick }>
-                          <div style={ styles.adjective } id="adjective" />
-                      </div>
-                      { this.state.adjectiveDisplay ? <div style={ styles.popover }>
-                          <div style={ styles.cover } onClick={ this.handleClose }/>
-                          <SketchPicker color={ this.state.adjective.color } onChange={ this.handleChange } />
-                      </div> : null }
-                      <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adjective</font>
-                  </div>
 
-                  <div>
-                      <Select defaultValue="Adverb" style={{ width: 120 }} onChange={this.handleCustomTag}>
-                          <Option value="adverb">Adverb</Option>
-                          <Option value="noun">Noun</Option>
-                      </Select>
+                                {/*/!* interjection *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.interjection} id="interjection" />
+                                    </div>
+                                    {this.state.interjectionDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.interjection.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Interjection</font>
+                                </div>
 
-                      {/*/!* custom *!/*/}
-                      <div>
-                          <div style={ styles.swatch } onClick={ this.handleClick }>
-                              <div style={ styles.custom } id="custom" />
-                          </div>
-                          { this.state.customDisplay ? <div style={ styles.popover }>
-                              <div style={ styles.cover } onClick={ this.handleClose }/>
-                              <SketchPicker color={ this.state.custom.color } onChange={ this.handleCustomChangeColor} />
-                          </div> : null }
-                          <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Custom</font>
-                      </div>
-                  </div>
+                                {/*/!* particle *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.particle} id="particle" />
+                                    </div>
+                                    {this.state.particleDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.particle.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Particle</font>
+                                </div>
 
-                  <Select defaultValue="English" style={{ width: 120 }} onChange={this.handleLanguage}>
-                    <Option value="english">English</Option>
-                    <Option value="spanish">Spanish</Option>
-                    <Option value="french">French</Option>
-                  </Select>
+                                {/*/!* punctuation *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.punctuation} id="punctuation" />
+                                    </div>
+                                    {this.state.punctuationDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.punctuation.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Punctuation</font>
+                                </div>
 
-                  {/*/!* report text form *!/*/}
-                  <Modal
-                      title="Please report issues here"
-                      visible={this.state.reportText}
-                      onOK={this.handleCloseText}
-                      onCancel={this.handleCloseText}
-                  >
+                                {/*/!* verb *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.verb} id="verb" />
+                                    </div>
+                                    {this.state.verbDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.verb.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Verb</font>
+                                </div>
 
-                      <TextArea rows={4} onChange={this.handleBugText}/>
+                                {/*/!* unknown *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.unknown} id="unknown" />
+                                    </div>
+                                    {this.state.unknownDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.unknown.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Unknown</font>
+                                </div>
 
-                      <Button
-                          onClick={this.reportBug}
-                          style={{ marginTop:'2%', marginBottom: '2%', width: '150px' }}
-                          size={"small"}>
-                          Submit
-                      </Button>
+                                {/*/!* conjunction *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.conjunction} id="conjunction" />
+                                    </div>
+                                    {this.state.conjunctionDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.conjunction.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Conjunction</font>
+                                </div>
 
-                  </Modal>
-                
-                                 
-                  {/* add the download button */}
+                                {/*/!* adjective *!/*/}
+                                <div>
+                                    <div style={styles.swatch} onClick={this.handleClick}>
+                                        <div style={styles.adjective} id="adjective" />
+                                    </div>
+                                    {this.state.adjectiveDisplay ? <div style={styles.popover}>
+                                        <div style={styles.cover} onClick={this.handleClose} />
+                                        <SketchPicker color={this.state.adjective.color} onChange={this.handleChange} />
+                                    </div> : null}
+                                    <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Adjective</font>
+                                </div>
 
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} onClick={this.handleDownload} shape="round" icon="download" size='large'>
-                          Download
-                      </Button>
-                  </div>
+                                <div>
+                                    <Select defaultValue="Adverb" style={{ width: 120 }} onChange={this.handleCustomTag}>
+                                        <Option value="adverb">Adverb</Option>
+                                        <Option value="noun">Noun</Option>
+                                    </Select>
 
-                  <div>
-                  
-                  </div>
+                                    {/*/!* custom *!/*/}
+                                    <div>
+                                        <div style={styles.swatch} onClick={this.handleClick}>
+                                            <div style={styles.custom} id="custom" />
+                                        </div>
+                                        {this.state.customDisplay ? <div style={styles.popover}>
+                                            <div style={styles.cover} onClick={this.handleClose} />
+                                            <SketchPicker color={this.state.custom.color} onChange={this.handleCustomChangeColor} />
+                                        </div> : null}
+                                        <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Custom</font>
+                                    </div>
+                                </div>
+                            </Modal>
 
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon="upload" onClick={this.showModal} size="large">
-                          Upload
-                      </Button>
-                  </div>
-                  
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon="arrow-right" onClick={this.sendEmail} size="large">
-                          Email
-                      </Button>
-                      <input type="text" name="email" value={this.state.email} 
-                        onChange={this.handleEmailChange.bind(this)}/>
-                  </div>
+                            {/*/!* report text form *!/*/}
+                            <Modal
+                                title="Please report issues here"
+                                visible={this.state.reportText}
+                                onOK={this.handleCloseText}
+                                onCancel={this.handleCloseText}
+                            >
 
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="bug" onClick={this.showReport} size="large">
-                          Report bug
-                      </Button>
-                  </div>
-                               
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="edit" onClick={this.changeBackgroundColor} size="large">
-                          Background
-                      </Button>
-                  </div>
-                               
-                               
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="arrow-left" onClick={this.clearContent} size="large">
-                          Clear
-                      </Button>
-                  </div>            
-                               
-           
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="twitter" onClick={this.handleTwitterShare} size="large">
-                          Share on Twitter
-                      </Button>
-                  </div>
+                                <TextArea rows={4} onChange={this.handleBugText} />
 
-                  <div>
-                      <Button style={{marginTop:'2%', marginBottom: '2%', width: '200px'}} shape="round" icon ="facebook" onClick={this.handleFBShare} size="large">
-                          Share on Facebook
-                      </Button>
-                  </div>
-                  
-              </div>
+                                <Button
+                                    onClick={this.reportBug}
+                                    style={{ marginTop: '2%', marginBottom: '2%', width: '150px' }}
+                                    size={"small"}>
+                                    Submit
+                          </Button>
 
-              <div>
-                  <Statistic  value={this.state.number_text} suffix="/ 5000" />
-              </div>
-              {/*  The first part is word container  */}
-              <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
-                    {switchword}
-              </div>
+                            </Modal>
 
-          </div>
+                            <Menu.Item key="download" onClick={this.handleDownload} >
+                                <Icon type="download" />
+                                <span className="nav-text">Download</span>
+                            </Menu.Item>
+
+                            <Menu.Item key="upload" onClick={this.showModal} >
+                                <Icon type="upload" />
+                                <span className="nav-text">Upload</span>
+                            </Menu.Item>
+
+                            <Modal
+                                title="Title"
+                                visible={visible}
+                                onOk={this.handleCloseModal}
+                                confirmLoading={confirmLoading}
+                                onCancel={this.handleCloseModal}
+                            >
+
+                                <Dragger {...props}>
+                                    <p className="ant-upload-drag-icon">
+                                        <Icon type="inbox" />
+                                    </p>
+                                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                    <p className="ant-upload-hint">
+                                        Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                                        band files
+                          </p>
+                                </Dragger>
+                                <Button
+                                    size={"large"}
+                                    onClick={this.handleUpload}
+                                    disabled={fileList.length === 0}
+                                    loading={uploading}
+                                    style={{ marginTop: 16, width: '100%' }}
+                                >
+                                    {uploading ? 'Uploading' : 'Start Upload'}
+                                </Button>
+                            </Modal>
+
+                            <SubMenu key="email" onClick={this.sendEmail} title={
+                                <span>
+                                    <Icon type="mail" />
+                                    <span>Email PDF to</span>
+                                </span>
+                            }>
+                                <Icon type="mail" />
+                                <input type="text" name="email" value={this.state.email}
+                                    onChange={this.handleEmailChange.bind(this)} />
+
+                            </SubMenu>
+
+                            <Menu.Item key="background" onClick={this.changeBackgroundColor} >
+                                <Icon type="bg-colors" />
+                                <span className="nav-text">Background</span>
+                            </Menu.Item>
+
+                            <Menu.Item key="clear" onClick={this.clearContent} >
+                                <Icon type="delete" />
+                                <span className="nav-text">Clear</span>
+                            </Menu.Item>
+
+                            <SubMenu key="social" title={
+                                <span><Icon type="share-alt" />
+                                    <span>Share</span>
+                                </span>
+                            }>
+                                <Menu.Item key="twitter" onClick={this.handleTwitterShare} >
+                                    <Icon type="twitter" />
+                                    <span className="nav-text">Twitter</span>
+                                </Menu.Item>
+
+                                <Menu.Item key="facebook" onClick={this.handleFBshare} >
+                                    <Icon type="facebook" />
+                                    <span className="nav-text">Facebook</span>
+                                </Menu.Item>
+                            </SubMenu>
+
+                            <Menu.Item key="ReportBug" onClick={this.showReport} >
+                                <Icon type="bug" />
+                                <span className="nav-text">Report A Bug</span>
+                            </Menu.Item>
+
+                        </Menu>
+                    </Sider>
+                    <Layout style={{ marginLeft: 100 }}>
+                        <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
+                            <div style={{ padding: 24, textAlign: 'left' }}>
+                                <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+                                    {switchword}
+                                </div>
+
+                            </div>
+                        </Content>
+                        <Footer style={{ textAlign: 'center' }}>English Syntax Highlighter ©2019 Created by Team Dragonfly</Footer>
+                    </Layout>
+                </Layout>
+
+
+
+                {/*  The first part is word container  */}
+            </div >
         );
     }
 
@@ -1144,39 +1204,39 @@ var SwitchWord = (props) => {
     let word = props.word;
     let color = props.colors;
     let space = props.space
-    
+
     switch (type) {
         case (type.match(/^NEWLINE/) || {}).input:
             return (<br></br>);
         case (type.match(/^VB*/) || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.verb.background}}> {word}</span> :
-                 <span id={props.id} style={{color: color.verb.background}}>{word}</span>);
-        case (type.match(/^NN*/)  || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.noun.background}}> {word}</span> :
-                <span id={props.id} style={{color: color.noun.background}}>{word}</span> );
+            return (space === 1 ? <span id={props.id} style={{ color: color.verb.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.verb.background }}>{word}</span>);
+        case (type.match(/^NN*/) || {}).input:
+            return (space === 1 ? <span id={props.id} style={{ color: color.noun.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.noun.background }}>{word}</span>);
         case (type.match(/^RB*/) || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.adverb.background}}> {word}</span>:
-                <span id={props.id} style={{color: color.adverb.background}}>{word}</span>);
-        case (type.match(/^DT/)  || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.determiner.background}}> {word}</span>:
-                <span id={props.id} style={{color: color.determiner.background}}>{word}</span>);
-        case (type.match(/^UH/)  ||{}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.interjection.background}}> {word}</span>:
-                <span id={props.id} style={{color: color.interjection.background}}>{word}</span>);
+            return (space === 1 ? <span id={props.id} style={{ color: color.adverb.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.adverb.background }}>{word}</span>);
+        case (type.match(/^DT/) || {}).input:
+            return (space === 1 ? <span id={props.id} style={{ color: color.determiner.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.determiner.background }}>{word}</span>);
+        case (type.match(/^UH/) || {}).input:
+            return (space === 1 ? <span id={props.id} style={{ color: color.interjection.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.interjection.background }}>{word}</span>);
         case (type.match(/^RP/) || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.particle.background}}> {word}</span>:
-                <span id={props.id} style={{color: color.particle.background}}>{word}</span>);
-        case (type.match(/^CC/) || type.match(/^IN/)  ||{}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.conjunction.background}}> {word}</span>:
-                <span id={props.id} style={{color: color.conjunction.background}}>{word}</span>);
+            return (space === 1 ? <span id={props.id} style={{ color: color.particle.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.particle.background }}>{word}</span>);
+        case (type.match(/^CC/) || type.match(/^IN/) || {}).input:
+            return (space === 1 ? <span id={props.id} style={{ color: color.conjunction.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.conjunction.background }}>{word}</span>);
         case (type.match(/^JJ*/) || {}).input:
-            return (space === 1 ? <span id={props.id} style={{color: color.adjective.background}}> {word}</span>:
-                <span id={props.id} style={{color: color.adjective.background}}>{word}</span>);
+            return (space === 1 ? <span id={props.id} style={{ color: color.adjective.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.adjective.background }}>{word}</span>);
         case (type.match(/,|\.|\?|\]|\[|\{|\}|-|=|\+|\(|\)|!/) || type.match(/^SENT/) || type.match(/^PUNCTUATION/) || {}).input:
-            return (<span id={props.id} style={{color: color.punctuation.background}}>{word}</span>);
+            return (<span id={props.id} style={{ color: color.punctuation.background }}>{word}</span>);
         default:
-            return (space === 1 ? <span id={props.id} style={{color: color.unknown.background}}> {word}</span>:
-                <span id={props.id} style={{color: color.unknown.background}}>{word}</span>);
+            return (space === 1 ? <span id={props.id} style={{ color: color.unknown.background }}> {word}</span> :
+                <span id={props.id} style={{ color: color.unknown.background }}>{word}</span>);
     }
 };
 
