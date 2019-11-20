@@ -96,7 +96,7 @@ class Upload(Resource):
 
 def highlight(text, language):
     text = LineTokenizer(blanklines='keep').tokenize(text)
-    print(text)
+    #print(text)
     if (language == "english"):
         arr = []
         count = 1
@@ -106,8 +106,8 @@ def highlight(text, language):
             token = nltk.word_tokenize(el)
             data = nltk.pos_tag(token)
             for (word, word_type) in data:
-                print(word)
-                print(word_type)
+                #print(word)
+                #print(word_type)
                 res.append({
                     "word": word,
                     "type": word_type,
@@ -183,14 +183,14 @@ def highlight(text, language):
             res = []
             tt = TreeTagger(path_to_treetagger=treetaggerPath, language=language)
             result = tt.tag(el)
-            print(result)
+            #print(result)
             if result[0][0] == '':
                 break
             for (word, word_type, x) in result:
                 # map from their tagging syntax to treetag syntax
                 # so frontend displays colors correctly
-                print(word)
-                print(word_type)
+                #print(word)
+                #print(word_type)
                 if word_type == "ADV":
                     word_type = "RB"
                 elif word_type == "NOM" or word_type == "NP" or word_type[:3] == "PRO":
@@ -237,9 +237,10 @@ class Info(Resource):
         if id is None:
             abort(400, 'Missing id')
         tuple = get_tuple(id)
+        #print(tuple['text'])
         res = highlight(tuple['text'], tuple['language'])
-        return make_response(jsonify(res=res,id=tuple['_id']), 200)
-
+        #print(res)
+        return make_response(jsonify({"res": res}), 200)
 
 email = api.namespace('email', description="Email api")
 @email.route("/", strict_slashes=False)
