@@ -157,11 +157,13 @@ class HomePage extends React.Component {
             visible: false,
             confirmLoading: false,
             number_text: 0,
+
             tags: ['adverb', 'noun', 'adposition', 'determiner', 'interjection', 'particle', 'punctuation', 'verb', 'unknown', 'conjunction', 'adjective'],
             custom_tag: 'adverb',
             collapsed: true,
             colorpicker: false,
             lighttheme: false,
+
         };
 
         // this.AfterInit();
@@ -199,13 +201,18 @@ class HomePage extends React.Component {
                 "id": id,
             }
         }).then(dataRes => {
-            if (dataRes.data.res.length * 2 > 2499) {
-                dataRes.data.res = dataRes.data.res.splice(0, 2499);
-            }
+            var arr = dataRes.data.res;
+            console.log(arr);
+            var res = [];
+            arr.forEach(function(el){
+                el.forEach(function(rl){
+                    res.push(rl);
+                });
+            });
+            console.log(res);
             this.setState({
-                res: dataRes.data.res,
-                id: dataRes.data.id,
-                number_text: dataRes.data.res.length * 2
+                res: res,
+                id: dataRes.data.id
             });
             window.localStorage.setItem('id', dataRes.data.id);
             this.forceUpdate();
@@ -325,6 +332,7 @@ class HomePage extends React.Component {
         formData.append('language', this.state.language);
         this.setState({
             uploading: true,
+            remove_switchword: true
         });
         // You can use any AJAX library you like
         reqwest({
@@ -339,17 +347,33 @@ class HomePage extends React.Component {
                 if (res.res.length * 2 > 2499) {
                     res.res = res.res.splice(0, 2499);
                 }
+                var arr = res.res;
+                //console.log(arr);
+                res = [];
+                arr.forEach(function(el){
+                    el.forEach(function(rl){
+                        res.push(rl);
+                    });
+                });
+                console.log(res);
+                this.setState({
+                    res: res,
+                    id: res.id
+                });
+                window.localStorage.setItem('id', res.id);
+            this.forceUpdate();
                 this.setState({
                     fileList: [],
                     uploading: false,
                     visible: false,
-                    res: res.res,
+                    res: res,
                     text_input: "",
                     remove_switchword: false,
                     id: res.id
                 });
                 window.localStorage.setItem('id', res.id);
                 message.success('Your file upload success');
+                this.setState({ res: res.res});
             },
             error: () => {
                 this.setState({
@@ -492,7 +516,7 @@ class HomePage extends React.Component {
                     res.push(rl);
                 });
             });
-            //console.log(res);
+            console.log(res);
             this.setState({
                 res: res,
                 id: dataRes.data.id
@@ -893,6 +917,7 @@ class HomePage extends React.Component {
             });
 
         return (
+
             <div>
                 <Layout>
                     <Sider theme={this.state.lighttheme ? "light" : "dark"} collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}
@@ -1193,6 +1218,7 @@ class HomePage extends React.Component {
 
                 {/*  The first part is word container  */}
             </div >
+
         );
     }
 
