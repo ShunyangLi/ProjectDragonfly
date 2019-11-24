@@ -6,14 +6,14 @@ import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
-import { Button, Modal, Select, Upload, Icon, message, Input, Statistic, Layout, Menu, Drawer } from 'antd';
+import { Button, Modal, Select, Upload, Icon, message, Input, Layout, Menu } from 'antd';
 
 import "../index.css"
 
-const { Header, Content, Footer, Sider } = Layout;
+const {Content, Footer, Sider } = Layout;
 const { Dragger } = Upload;
 const { Option } = Select;
-const { SubMenu } = Menu
+const { SubMenu } = Menu;
 let timer = null;
 
 // this is home page, we need contain the highlight part and tools part
@@ -40,7 +40,13 @@ class HomePage extends React.Component {
                     g: '119',
                     b: '122',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '242',
+                    g: '119',
+                    b: '122',
+                    a: '1'
+                },
             },
             noun: {
                 color: {
@@ -48,7 +54,13 @@ class HomePage extends React.Component {
                     g: '145',
                     b: '87',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '249',
+                    g: '145',
+                    b: '87',
+                    a: '1'
+                },
             },
             adposition: {
                 color: {
@@ -56,7 +68,13 @@ class HomePage extends React.Component {
                     g: '204',
                     b: '102',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '255',
+                    g: '204',
+                    b: '102',
+                    a: '1'
+                },
             },
             determiner: {
                 color: {
@@ -64,7 +82,13 @@ class HomePage extends React.Component {
                     g: '204',
                     b: '153',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '153',
+                    g: '204',
+                    b: '153',
+                    a: '1'
+                },
             },
             interjection: {
                 color: {
@@ -72,7 +96,13 @@ class HomePage extends React.Component {
                     g: '204',
                     b: '204',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '102',
+                    g: '204',
+                    b: '204',
+                    a: '1'
+                },
             },
             particle: {
                 color: {
@@ -80,7 +110,13 @@ class HomePage extends React.Component {
                     g: '153',
                     b: '204',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '102',
+                    g: '153',
+                    b: '204',
+                    a: '1'
+                },
             },
             punctuation: {
                 color: {
@@ -88,7 +124,13 @@ class HomePage extends React.Component {
                     g: '240',
                     b: '236',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '242',
+                    g: '240',
+                    b: '236',
+                    a: '1'
+                },
             },
             verb: {
                 color: {
@@ -96,7 +138,13 @@ class HomePage extends React.Component {
                     g: '153',
                     b: '204',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '204',
+                    g: '153',
+                    b: '204',
+                    a: '1'
+                },
             },
             unknown: {
                 color: {
@@ -104,7 +152,13 @@ class HomePage extends React.Component {
                     g: '208',
                     b: '200',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '211',
+                    g: '208',
+                    b: '200',
+                    a: '1'
+                },
             },
             conjunction: {
                 color: {
@@ -112,7 +166,13 @@ class HomePage extends React.Component {
                     g: '123',
                     b: '83',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '210',
+                    g: '123',
+                    b: '83',
+                    a: '1'
+                },
             },
             adjective: {
                 color: {
@@ -120,7 +180,13 @@ class HomePage extends React.Component {
                     g: '153',
                     b: '204',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '102',
+                    g: '153',
+                    b: '204',
+                    a: '1'
+                },
             },
             custom: {
                 color: {
@@ -128,7 +194,13 @@ class HomePage extends React.Component {
                     g: '0',
                     b: '0',
                     a: '1'
-                }
+                },
+                default_color: {
+                    r: '0',
+                    g: '0',
+                    b: '0',
+                    a: '1'
+                },
             },
             black: {
                 color: {
@@ -136,7 +208,7 @@ class HomePage extends React.Component {
                     g: '255',
                     b: '255',
                     a: '1'
-                }
+                },
             },
             adverbDisplay: false,
             nounDisplay: false,
@@ -182,8 +254,9 @@ class HomePage extends React.Component {
 
     // after init try to get the cookie's color
     componentDidMount = () => {
-
+        // window.localStorage.setItem('id', 43);
         let id = window.localStorage.getItem('id');
+
         let parts = [];
         window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
             parts[key] = value;
@@ -196,29 +269,31 @@ class HomePage extends React.Component {
             }
         }
 
-        axios.get('http://127.0.0.1:5000/info/', {
-            params: {
-                "id": id,
-            }
-        }).then(dataRes => {
-            var arr = dataRes.data.res;
-            console.log(arr);
-            var res = [];
-            arr.forEach(function(el){
-                el.forEach(function(rl){
-                    res.push(rl);
+        if (id !== undefined) {
+            axios.get('http://127.0.0.1:5000/info/', {
+                params: {
+                    "id": id,
+                }
+            }).then(dataRes => {
+                var arr = dataRes.data.res;
+                // console.log(arr);
+                var res = [];
+                arr.forEach(function(el){
+                    el.forEach(function(rl){
+                        res.push(rl);
+                    });
                 });
+                // console.log(res);
+                this.setState({
+                    res: res,
+                    id: dataRes.data.id
+                });
+                // window.localStorage.setItem('id', dataRes.data.id);
+                this.forceUpdate();
+            }).catch(function (error) {
+                console.log(error);
             });
-            console.log(res);
-            this.setState({
-                res: res,
-                id: dataRes.data.id
-            });
-            window.localStorage.setItem('id', dataRes.data.id);
-            this.forceUpdate();
-        }).catch(function (error) {
-            console.log(error);
-        });
+        }
 
 
         let adverb = JSON.parse(window.localStorage.getItem('adverb'));
@@ -236,15 +311,17 @@ class HomePage extends React.Component {
         if (adverb !== null) {
             this.setState({
                 adverb: {
-                    color: adverb
-                }
+                    color: adverb,
+                    default_color: adverb
+                },
             });
         }
 
         if (noun !== null) {
             this.setState({
                 noun: {
-                    color: noun
+                    color: noun,
+                    default_color: noun
                 }
             })
         }
@@ -252,7 +329,8 @@ class HomePage extends React.Component {
         if (adposition !== null) {
             this.setState({
                 adposition: {
-                    color: adposition
+                    color: adposition,
+                    default_color: adposition
                 }
             })
         }
@@ -260,7 +338,8 @@ class HomePage extends React.Component {
         if (determiner !== null) {
             this.setState({
                 determiner: {
-                    color: determiner
+                    color: determiner,
+                    default_color: determiner
                 }
             })
         }
@@ -268,7 +347,8 @@ class HomePage extends React.Component {
         if (interjection !== null) {
             this.setState({
                 interjection: {
-                    color: interjection
+                    color: interjection,
+                    default_color: interjection
                 }
             })
         }
@@ -276,7 +356,8 @@ class HomePage extends React.Component {
         if (particle !== null) {
             this.setState({
                 particle: {
-                    color: particle
+                    color: particle,
+                    default_color: particle
                 }
             })
         }
@@ -284,7 +365,8 @@ class HomePage extends React.Component {
         if (punctuation !== null) {
             this.setState({
                 punctuation: {
-                    color: punctuation
+                    color: punctuation,
+                    default_color: punctuation
                 }
             })
         }
@@ -292,7 +374,8 @@ class HomePage extends React.Component {
         if (verb !== null) {
             this.setState({
                 verb: {
-                    color: verb
+                    color: verb,
+                    default_color: verb
                 }
             })
         }
@@ -300,7 +383,8 @@ class HomePage extends React.Component {
         if (unknown !== null) {
             this.setState({
                 unknown: {
-                    color: unknown
+                    color: unknown,
+                    default_color: unknown
                 }
             })
         }
@@ -308,7 +392,8 @@ class HomePage extends React.Component {
         if (conjunction !== null) {
             this.setState({
                 conjunction: {
-                    color: conjunction
+                    color: conjunction,
+                    default_color: conjunction
                 }
             })
         }
@@ -316,7 +401,8 @@ class HomePage extends React.Component {
         if (adjective !== null) {
             this.setState({
                 adjective: {
-                    color: adjective
+                    color: adjective,
+                    default_color: adjective
                 }
             })
         }
@@ -344,23 +430,23 @@ class HomePage extends React.Component {
             processData: false,
             mimeTypes: "multipart/form-data",
             success: (res) => {
+                let id = res.id;
                 if (res.res.length * 2 > 2499) {
                     res.res = res.res.splice(0, 2499);
                 }
                 var arr = res.res;
-                //console.log(arr);
                 res = [];
                 arr.forEach(function(el){
                     el.forEach(function(rl){
                         res.push(rl);
                     });
                 });
-                console.log(res);
                 this.setState({
                     res: res,
-                    id: res.id
+                    id: id
                 });
-                window.localStorage.setItem('id', res.id);
+                console.log(id);
+                window.localStorage.setItem('id', id);
             this.forceUpdate();
                 this.setState({
                     fileList: [],
@@ -369,11 +455,11 @@ class HomePage extends React.Component {
                     res: res,
                     text_input: "",
                     remove_switchword: false,
-                    id: res.id
+                    id: id
                 });
-                window.localStorage.setItem('id', res.id);
+                window.localStorage.setItem('id', id);
                 message.success('Your file upload success');
-                this.setState({ res: res.res});
+                this.setState({ res: res});
             },
             error: () => {
                 this.setState({
@@ -426,12 +512,15 @@ class HomePage extends React.Component {
         this.setState({
             [id]: {
                 color: color.rgb
+            },
+            default_color: {
+                color: color.rgb
             }
         });
 
         // because we need to store the color into the cookie, so we need to chanage here
         // the id is the name of color, and the color.rgb is the rgb of the color
-        console.log(JSON.stringify(color.rgb));
+        // console.log(JSON.stringify(color.rgb));
         window.localStorage.setItem(id, JSON.stringify(color.rgb));
     };
 
@@ -448,7 +537,9 @@ class HomePage extends React.Component {
                 var formData = new FormData();
                 formData.append('pdf', pdf);
                 formData.append('email', this.state.email);
-                //console.log(this.state.email)
+
+                console.log(formData);
+
                 reqwest({
                     url: 'http://127.0.0.1:5000/email/',
                     method: 'POST',
@@ -516,7 +607,7 @@ class HomePage extends React.Component {
                     res.push(rl);
                 });
             });
-            console.log(res);
+            // console.log(dataRes.data.id);
             this.setState({
                 res: res,
                 id: dataRes.data.id
@@ -715,7 +806,8 @@ class HomePage extends React.Component {
     changeBackgroundColor = () => {
         this.setState({
             lighttheme: !this.state.lighttheme
-        })
+        });
+
         if (document.getElementById('words').className === "word_container") {
             document.getElementById('words').className = "word_container2";
         }
@@ -750,14 +842,25 @@ class HomePage extends React.Component {
 
 
     handleFBShare = () => {
+        console.log(window.localStorage.getItem('id'));
         let url = 'https://www.facebook.com/sharer/sharer.php?u=127.0.0.1:3000/?id=' + window.localStorage.getItem('id');
         window.open(url);
     };
 
     handleCustomTag = (value) => {
+        let id = value;
         this.setState({
             custom_tag: value
-        })
+        });
+        // this.handleCustomChangeColor(this.state.custom.color);
+        this.setState({
+            [id]: {
+                color: this.state.custom.color,
+                default_color: this.state[id].default_color
+            }
+        });
+
+        this.convertColor(id);
     };
 
     handleCustomChangeColor = (color) => {
@@ -765,29 +868,53 @@ class HomePage extends React.Component {
         let id = this.state.custom_tag;
         this.setState({
             [id]: {
-                color: color.rgb
+                color: color.rgb,
+                default_color: this.state[id].default_color
             },
             custom: {
                 color: color.rgb
             }
         });
+
+        this.convertColor(id);
+    };
+
+    // handle reset all the color
+    handleResetColor = () => {
+        let others = this.state.tags;
+        for (let i = 0; i < others.length; i++) {
+            let tag = others[i];
+            this.setState({
+                [tag]: {
+                    color: this.state[tag].default_color,
+                    default_color: this.state[tag].default_color
+                }
+            })
+        }
+    };
+
+    convertColor = (id) => {
         // window.localStorage.setItem(id, JSON.stringify(color.rgb));
         // then change all the other color into black
         let others = this.state.tags;
         for (let i = 0; i < others.length; i++) {
             let tag = others[i];
-            console.log(tag);
+            // console.log(this.state[tag].default_color);
+            // console.log(tag);
             if (tag !== id) {
                 this.setState({
                     [tag]: {
-                        color: this.state.black.color
+                        color: this.state.black.color,
+                        default_color: this.state[tag].default_color
                     }
-                })
+                });
             }
         }
     };
 
     render() {
+
+        const {custom_tag} = this.state;
         // this part is about upload
         const { uploading, fileList } = this.state;
         const props = {
@@ -1082,6 +1209,15 @@ class HomePage extends React.Component {
                                     <Select defaultValue="Adverb" style={{ width: 120 }} onChange={this.handleCustomTag}>
                                         <Option value="adverb">Adverb</Option>
                                         <Option value="noun">Noun</Option>
+                                        <Option value="adposition">Adposition</Option>
+                                        <Option value="determiner">Determiner</Option>
+                                        <Option value="interjection">Interjection</Option>
+                                        <Option value="particle">Particle</Option>
+                                        <Option value="punctuation">Punctuation</Option>
+                                        <Option value="verb">Verb</Option>
+                                        <Option value="unknown">Unknown</Option>
+                                        <Option value="conjunction">Conjunction</Option>
+                                        <Option value="adjective">Adjective</Option>
                                     </Select>
 
                                     {/*/!* custom *!/*/}
@@ -1093,8 +1229,11 @@ class HomePage extends React.Component {
                                             <div style={styles.cover} onClick={this.handleClose} />
                                             <SketchPicker color={this.state.custom.color} onChange={this.handleCustomChangeColor} />
                                         </div> : null}
-                                        <font style={{ marginBottom: '100%', marginLeft: '2%' }}>Custom</font>
+                                        <font style={{ marginBottom: '100%', marginLeft: '2%' }}>{custom_tag}</font>
                                     </div>
+                                </div>
+                                <div>
+                                    <Button onClick={this.handleResetColor} icon={"rest"} size={"large"}>Reset Color</Button>
                                 </div>
                             </Modal>
 
@@ -1106,14 +1245,14 @@ class HomePage extends React.Component {
                                 onCancel={this.handleCloseText}
                             >
 
-                                <TextArea rows={4} onChange={this.handleBugText} />
+                                <TextArea rows={4} onChange={this.reportEditor} />
 
                                 <Button
                                     onClick={this.reportBug}
                                     style={{ marginTop: '2%', marginBottom: '2%', width: '150px' }}
                                     size={"small"}>
                                     Submit
-                          </Button>
+                                </Button>
 
                             </Modal>
 
@@ -1188,7 +1327,7 @@ class HomePage extends React.Component {
                                     <span className="nav-text">Twitter</span>
                                 </Menu.Item>
 
-                                <Menu.Item key="facebook" onClick={this.handleFBshare} >
+                                <Menu.Item key="facebook" onClick={this.handleFBShare} >
                                     <Icon type="facebook" />
                                     <span className="nav-text">Facebook</span>
                                 </Menu.Item>

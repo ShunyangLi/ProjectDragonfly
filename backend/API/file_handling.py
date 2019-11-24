@@ -14,6 +14,8 @@ import base64
 from treetagger import TreeTagger # to install this, read README
 import docx # pip install python-docx
 from nltk.tokenize import LineTokenizer
+from threading import Thread
+
 api = Api(app)
 #treetaggerPath = '/Users/lilihuan/Desktop/TreeTagger/'
 treetaggerPath = '/home/sam/Downloads/tree-tagger/' # install and fill this in
@@ -90,6 +92,7 @@ class Upload(Resource):
             id = insert_into_db(text, language)
             # highlight the text
             res = highlight(text, language)
+            print(id)
             return make_response(jsonify(res=res,id=id), 200)
         abort(400, 'No files')
 
@@ -242,6 +245,25 @@ class Info(Resource):
         #print(res)
         return make_response(jsonify({"res": res}), 200)
 
+def async_start(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+
+def send_mail(to, pdf):
+    msg = Message("Here's your syntax highlighted file!", sender = 'comp6733asdf@gmail.com', recipients = [to])
+    msg.attach(filename="file.pdf", content_type='application/pdf', data=pdf)
+    thread = Thread(target=async_start, args=[app, msg])
+    thread.start()
+
+
+def send_bug(to, text):
+    msg = Message("Bug report", sender = 'comp6733asdf@gmail.com', recipients = [to])
+    msg.body = text
+    thread = Thread(target=async_start, args=[app, msg])
+    thread.start()
+
+
 email = api.namespace('email', description="Email api")
 @email.route("/", strict_slashes=False)
 class Email(Resource):
@@ -254,10 +276,7 @@ class Email(Resource):
         pdf = args.get('pdf')
         email = args.get('email')
         pdf = base64.b64decode(pdf)
-
-        msg = Message("Here's your syntax highlighted file!", sender = 'comp6733asdf@gmail.com', recipients = [email])
-        msg.attach(filename="file.pdf", content_type='application/pdf', data=pdf)
-        mail.send(msg)
+        send_mail(email, pdf)
         res = []
         return make_response(jsonify({"res": res}), 200)
 
@@ -271,9 +290,7 @@ class Bugreport(Resource):
         args = parser.parse_args()
         text = args.get('text')
         email = 'comp6733asdf@gmail.com'
-        msg = Message("Bug report", sender = 'comp6733asdf@gmail.com', recipients = [email])
-        msg.body = text
-        mail.send(msg)
+        send_bug(email, text)
         res = []
         return make_response(jsonify({"res": res}), 200)
 

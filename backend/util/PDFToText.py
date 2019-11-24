@@ -2,8 +2,8 @@ import json
 import requests
 from flask_restplus import abort
 
-LicenseCode = 'CC30EA1E-FFB6-46A9-BEC6-7E17749BC7F2'
-UserName = 'CHARLES0812'
+LicenseCode = '4633FB51-5B96-4003-B06E-AD5F7B615D74'
+UserName = 'THEPROFESSOR'
 
 RequestUrl = "http://www.ocrwebservice.com/restservices/processDocument?gettext=true&language=chinesesimplified"
 
