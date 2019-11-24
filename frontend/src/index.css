@@ -25,7 +25,7 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 780px;
+  height: 100vh;
   overflow-y: auto;
 }
 
@@ -42,6 +42,6 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 850px;
+  height: 100vh;
   overflow-y: auto;
 }

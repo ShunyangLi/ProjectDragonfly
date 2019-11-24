@@ -1366,14 +1366,14 @@ class HomePage extends React.Component {
                     </Sider>
                     <Layout style={{ marginLeft: this.state.collapsed? 80: 200 }}>
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
-                            <div style={{ padding: 0, textAlign: 'left' }}>
+                            <div style={{ padding: 0, textAlign: 'left'}}>
                                 <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                                     {switchword}
                                 </div>
 
                             </div>
                         </Content>
-                        <Footer style={{ textAlign: 'center' }}>English Syntax Highlighter ©2019 Created by Team Dragonfly</Footer>
+                        <Footer style={{ textAlign: 'center', padding: 9 }}>English Syntax Highlighter ©2019 Created by Team Dragonfly</Footer>
                     </Layout>
                 </Layout>
 
