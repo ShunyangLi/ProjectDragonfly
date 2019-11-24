@@ -511,11 +511,9 @@ class HomePage extends React.Component {
         let id = this.state.current_id;
         this.setState({
             [id]: {
-                color: color.rgb
+                color: color.rgb,
+                default_color: color.rgb
             },
-            default_color: {
-                color: color.rgb
-            }
         });
 
         // because we need to store the color into the cookie, so we need to chanage here
@@ -529,14 +527,9 @@ class HomePage extends React.Component {
         var input = document.getElementById('words');
         html2canvas(input)
             .then((canvas) => {
-                const input = document.getElementById('words');
-                var theCSSprop = window.getComputedStyle(input, null).getPropertyValue("background-color");
-                // console.log(input.outerHTML);
+                var imgData = canvas.toDataURL('image/png');
                 var pdf = new jsPDF();
-                pdf.setFillColor(theCSSprop);
-                pdf.rect(0, 0, 240, 400, "F");
-                pdf.fromHTML(input.innerHTML);
-
+                pdf.addImage(imgData, 'JPEG', 0, 0);
                 pdf = btoa(pdf.output());
                 //console.log(pdf)
                 // send to backend
@@ -544,7 +537,7 @@ class HomePage extends React.Component {
                 formData.append('pdf', pdf);
                 formData.append('email', this.state.email);
 
-                console.log(formData);
+                // console.log(formData);
 
                 reqwest({
                     url: 'http://127.0.0.1:5000/email/',
@@ -673,15 +666,15 @@ class HomePage extends React.Component {
     // this is handle download
     handleDownload = () => {
         // make the inout firstly
-        const input = document.getElementById('words');
-        var theCSSprop = window.getComputedStyle(input, null).getPropertyValue("background-color");
-        // console.log(input.outerHTML);
-        var pdf = new jsPDF();
-        pdf.setFillColor(theCSSprop);
-        pdf.rect(0, 0, 240, 400, "F");
-        pdf.fromHTML(input.innerHTML);
-        pdf.save('download.pdf');
-
+        // const input = document.getElementById('words');
+        var input = document.getElementById('words');
+        html2canvas(input)
+            .then((canvas) => {
+                var imgData = canvas.toDataURL('image/png');
+                var pdf = new jsPDF();
+                pdf.addImage(imgData, 'JPEG', 0, 0);
+                pdf.save("download.pdf");
+            });
     };
 
     // TODO this is try to handle paste
@@ -765,7 +758,7 @@ class HomePage extends React.Component {
         this.setState({
             emailvisible: true,
         })
-    }
+    };
 
     handleBugText = (e) => {
         //console.log(e.target.value);
@@ -905,6 +898,7 @@ class HomePage extends React.Component {
         let others = this.state.tags;
         for (let i = 0; i < others.length; i++) {
             let tag = others[i];
+            // console.log(tag, this.state[tag].default_color);
             this.setState({
                 [tag]: {
                     color: this.state[tag].default_color,
