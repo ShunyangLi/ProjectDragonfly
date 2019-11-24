@@ -6,7 +6,7 @@ import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
-import { Button, Modal, Select, Upload, Icon, message, Input, Layout, Menu } from 'antd';
+import { Button, Modal, Select, Upload, Icon, message, Input, Layout, Menu, Statistic } from 'antd';
 
 import "../index.css"
 
@@ -511,11 +511,9 @@ class HomePage extends React.Component {
         let id = this.state.current_id;
         this.setState({
             [id]: {
-                color: color.rgb
+                color: color.rgb,
+                default_color: color.rgb
             },
-            default_color: {
-                color: color.rgb
-            }
         });
 
         // because we need to store the color into the cookie, so we need to chanage here
@@ -539,7 +537,7 @@ class HomePage extends React.Component {
                 formData.append('pdf', pdf);
                 formData.append('email', this.state.email);
 
-                console.log(formData);
+                // console.log(formData);
 
                 reqwest({
                     url: 'http://127.0.0.1:5000/email/',
@@ -588,7 +586,7 @@ class HomePage extends React.Component {
 
     // this part is for limit the numbers of input
     handleKeyDown = (e) => {
-        if (this.state.number_text > 4999) {
+        if (this.state.number_text > 49999) {
             if (e.key !== 'Backspace') {
                 e.preventDefault();
             }
@@ -668,6 +666,7 @@ class HomePage extends React.Component {
     // this is handle download
     handleDownload = () => {
         // make the inout firstly
+        // const input = document.getElementById('words');
         var input = document.getElementById('words');
         html2canvas(input)
             .then((canvas) => {
@@ -685,12 +684,12 @@ class HomePage extends React.Component {
         let content = e.clipboardData.getData('Text');
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
-        if (input_text.length > 4999) {
-            input_text = input_text.substring(0, 5000);
+        if (input_text.length > 49999) {
+            input_text = input_text.substring(0, 50000);
             this.setState({
-                number_text: 5000
+                number_text: 50000
             });
-            message.error("You can only input 5000 characters");
+            message.error("You can only input 50000 characters");
         } else {
             this.setState({
                 number_text: input_text.length
@@ -759,7 +758,7 @@ class HomePage extends React.Component {
         this.setState({
             emailvisible: true,
         })
-    }
+    };
 
     handleBugText = (e) => {
         //console.log(e.target.value);
@@ -825,9 +824,29 @@ class HomePage extends React.Component {
 
         if (document.getElementById('words').className === "word_container") {
             document.getElementById('words').className = "word_container2";
+            this.setState({
+                custom: {
+                    color: {
+                        r: '255',
+                        b: '255',
+                        g: '255',
+                        a: '1'
+                    }
+                }
+            });
         }
         else {
             document.getElementById('words').className = "word_container";
+            this.setState({
+                custom: {
+                    color: {
+                        r: '0',
+                        b: '0',
+                        g: '0',
+                        a: '1'
+                    }
+                }
+            });
         }
     };
 
@@ -899,6 +918,7 @@ class HomePage extends React.Component {
         let others = this.state.tags;
         for (let i = 0; i < others.length; i++) {
             let tag = others[i];
+            // console.log(tag, this.state[tag].default_color);
             this.setState({
                 [tag]: {
                     color: this.state[tag].default_color,
@@ -1366,9 +1386,16 @@ class HomePage extends React.Component {
                     </Sider>
                     <Layout style={{ marginLeft: this.state.collapsed? 80: 200 }}>
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
-                            <div style={{ padding: 0, textAlign: 'left'}}>
-                                <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
-                                    {switchword}
+     {switchword}
+
+                            <div style={{ padding: 0, textAlign: 'left' }}>
+                                <div id="downloads">
+                                    <div>
+                                    <Statistic title="Characters" value={this.state.number_text} suffix="/ 5000" />
+                                    </div>
+                                    <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+                                        {switchword}
+                                    </div>
                                 </div>
 
                             </div>

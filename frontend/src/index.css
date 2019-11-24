@@ -13,9 +13,10 @@ code {
 }
 /* the word container */
 .word_container {
-  width: 100%;
+  width: 63%;
   font-family: monospace;
   background: #FFFFFF;
+
   font-size: 30;
   padding: 30px;
   color: #000000;
@@ -26,15 +27,17 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
+
   height: 100vh;
   overflow-y: auto;
 }
 
 .word_container2 {
-  width: 100%;
+  width: 63%;
   font-family: monospace;
   font-size: 30;
   background: #001529;
+
   padding: 30px;
   color: #f2f0ec;
   white-space: pre-wrap;
