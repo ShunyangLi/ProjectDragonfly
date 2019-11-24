@@ -588,7 +588,7 @@ class HomePage extends React.Component {
 
     // this part is for limit the numbers of input
     handleKeyDown = (e) => {
-        if (this.state.number_text > 4999) {
+        if (this.state.number_text > 49999) {
             if (e.key !== 'Backspace') {
                 e.preventDefault();
             }
@@ -685,12 +685,12 @@ class HomePage extends React.Component {
         let content = e.clipboardData.getData('Text');
         let html_input = document.getElementById('words').innerHTML;
         let input_text = html_input.replace(/<[^>]*>?/gm, '') + content;
-        if (input_text.length > 4999) {
-            input_text = input_text.substring(0, 5000);
+        if (input_text.length > 49999) {
+            input_text = input_text.substring(0, 50000);
             this.setState({
-                number_text: 5000
+                number_text: 50000
             });
-            message.error("You can only input 5000 characters");
+            message.error("You can only input 50000 characters");
         } else {
             this.setState({
                 number_text: input_text.length
