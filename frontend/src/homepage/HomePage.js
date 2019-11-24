@@ -28,7 +28,7 @@ class HomePage extends React.Component {
         this.state = {
             id: 1,
             res: [],
-            text_input: "This is an English Syntax Highlighter.\n It uses Natural Language Proccessing to determine the part of speech. \n It works with tricky sentences as well: \n The man with a saw saw a saw.",
+            text_input: " This is an English Syntax Highlighter.\n It uses Natural Language Processing to determine the part of speech. \n It works with tricky sentences as well: \n The man with a saw saw a saw.",
             email: "",
             remove_switchword: false,
             language: "english",
@@ -1341,7 +1341,7 @@ class HomePage extends React.Component {
                             >
 
                                 <Input name = "email" value = {this.state.email} onChange={this.handleEmailChange.bind(this)} />
-                                <Button onClick={this.sendEmail}>Send</Button>
+                                <Button style={{ marginTop: '2%', marginBottom: '2%', width: '150px' }}  size={"small"} onClick={this.sendEmail}>Send</Button>
                             </Modal>
 
                             <Menu.Item key="email" onClick={this.handleOpenEmail} >
@@ -1386,7 +1386,9 @@ class HomePage extends React.Component {
                     </Sider>
                     <Layout style={{ marginLeft: this.state.collapsed? 80: 200 }}>
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
-                            <div style={{ padding: 24, textAlign: 'left' }}>
+     {switchword}
+
+                            <div style={{ padding: 0, textAlign: 'left' }}>
                                 <div id="downloads">
                                     <div>
                                     <Statistic title="Characters" value={this.state.number_text} suffix="/ 5000" />
@@ -1398,7 +1400,7 @@ class HomePage extends React.Component {
 
                             </div>
                         </Content>
-                        <Footer style={{ textAlign: 'center' }}>English Syntax Highlighter ©2019 Created by Team Dragonfly</Footer>
+                        <Footer style={{ textAlign: 'center', padding: 9 }}>English Syntax Highlighter ©2019 Created by Team Dragonfly</Footer>
                     </Layout>
                 </Layout>
 
