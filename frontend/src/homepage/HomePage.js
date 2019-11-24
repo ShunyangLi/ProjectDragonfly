@@ -1093,9 +1093,6 @@ class HomePage extends React.Component {
                     >
                         <div className="logo" />
                         <Menu theme={this.state.lighttheme ? "light" : "dark"} mode="inline" defaultSelectedKeys={['4']}>
-                            <Menu.Item>
-                                    <Statistic value={this.state.number_text} suffix="/ 5000" />
-                                    </Menu.Item>
                             <Menu.Item key="colorpicker" onClick={this.handleColorPicker} >
                                 <Icon type="highlight" />
                                 <span className="nav-text">ColorPicker</span>
