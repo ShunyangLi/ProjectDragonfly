@@ -204,9 +204,9 @@ class HomePage extends React.Component {
             },
             black: {
                 color: {
-                    r: '255',
-                    g: '255',
-                    b: '255',
+                    r: '169',
+                    g: '169',
+                    b: '169',
                     a: '1'
                 },
             },
