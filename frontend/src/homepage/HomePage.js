@@ -6,7 +6,7 @@ import reactCSS from 'reactcss';
 import 'antd/dist/antd.css';
 import html2canvas from 'html2canvas';
 import { SketchPicker } from 'react-color';
-import { Button, Modal, Select, Upload, Icon, message, Input, Layout, Menu } from 'antd';
+import { Button, Modal, Select, Upload, Icon, message, Input, Layout, Menu, Statistic } from 'antd';
 
 import "../index.css"
 
@@ -1368,6 +1368,9 @@ class HomePage extends React.Component {
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
                             <div style={{ padding: 24, textAlign: 'left' }}>
                                 <div id="downloads">
+                                    <div>
+                                    <Statistic title="Characters" value={this.state.number_text} suffix="/ 5000" />
+                                    </div>
                                     <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                                         {switchword}
                                     </div>
