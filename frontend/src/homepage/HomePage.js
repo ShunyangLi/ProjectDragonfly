@@ -28,7 +28,7 @@ class HomePage extends React.Component {
         this.state = {
             id: 1,
             res: [],
-            text_input: "This is an English Syntax Highlighter.\n It uses Natural Language Proccessing to determine the part of speech. \n It works with tricky sentences as well: \n The man with a saw saw a saw.",
+            text_input: " This is an English Syntax Highlighter.\n It uses Natural Language Processing to determine the part of speech. \n It works with tricky sentences as well: \n The man with a saw saw a saw.",
             email: "",
             remove_switchword: false,
             language: "english",
