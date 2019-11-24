@@ -235,7 +235,7 @@ class HomePage extends React.Component {
             collapsed: false,
             colorpicker: false,
             lighttheme: false,
-
+            emailvisible: false,
         };
 
         // this.AfterInit();
@@ -526,6 +526,7 @@ class HomePage extends React.Component {
 
     sendEmail = () => {
         var input = document.getElementById('words');
+        this.handleCloseEmail();
         html2canvas(input)
             .then((canvas) => {
                 var imgData = canvas.toDataURL('image/png');
@@ -746,6 +747,18 @@ class HomePage extends React.Component {
         })
     };
 
+    handleCloseEmail = () => {
+        this.setState({
+            emailvisible: false,
+        })
+    };
+
+    handleOpenEmail = () =>{
+        this.setState({
+            emailvisible: true,
+        })
+    }
+
     handleBugText = (e) => {
         //console.log(e.target.value);
         this.setState({ bugText: e.target.value });
@@ -892,6 +905,7 @@ class HomePage extends React.Component {
             })
         }
     };
+
 
     convertColor = (id) => {
         // window.localStorage.setItem(id, JSON.stringify(color.rgb));
@@ -1296,19 +1310,24 @@ class HomePage extends React.Component {
                             </Modal>
 
 
-                            
+                            {/*/!* report text form *!/*/}
+                            <Modal
+                                title="Send Email to"
+                                visible={this.state.emailvisible}
+                                onOK={this.sendEmail}
+                                onCancel={this.handleCloseEmail}
+                            >
 
-                            <SubMenu key="email" onClick={this.sendEmail} title={
-                                <span>
+                                <Input name = "email" value = {this.state.email} onChange={this.handleEmailChange.bind(this)} />
+
+                            </Modal>
+
+                            <Menu.Item key="email" onClick={this.handleOpenEmail} >
+             
                                     <Icon type="mail" />
-                                    <span>Email PDF to</span>
-                                </span>
-                            }>
-                                <Icon type="mail" />
-                                <input type="text" name="email" value={this.state.email}
-                                    onChange={this.handleEmailChange.bind(this)} />
-
-                            </SubMenu>
+                                    <span>Email PDF</span>
+                        
+                            </Menu.Item>
 
                             <Menu.Item key="background" onClick={this.changeBackgroundColor} >
                                 <Icon type="bg-colors" />
