@@ -528,7 +528,7 @@ class HomePage extends React.Component {
         html2canvas(input)
             .then((canvas) => {
                 var imgData = canvas.toDataURL('image/png');
-                var pdf = new jsPDF();
+                var pdf = new jsPDF('p', 'mm', [1300, 1500]);
                 pdf.addImage(imgData, 'JPEG', 0, 0);
                 pdf = btoa(pdf.output());
                 //console.log(pdf)
@@ -671,8 +671,8 @@ class HomePage extends React.Component {
         html2canvas(input)
             .then((canvas) => {
                 var imgData = canvas.toDataURL('image/png');
-                var pdf = new jsPDF();
-                pdf.addImage(imgData, 'JPEG', 0, 0);
+                var pdf = new jsPDF('p', 'mm', [1300, 1500]);
+                pdf.addImage(imgData, 'JPEG', 0, 0, 0, 0);
                 pdf.save("download.pdf");
             });
     };
@@ -1093,7 +1093,9 @@ class HomePage extends React.Component {
                     >
                         <div className="logo" />
                         <Menu theme={this.state.lighttheme ? "light" : "dark"} mode="inline" defaultSelectedKeys={['4']}>
-
+                            <Menu.Item>
+                                    <Statistic value={this.state.number_text} suffix="/ 5000" />
+                                    </Menu.Item>
                             <Menu.Item key="colorpicker" onClick={this.handleColorPicker} >
                                 <Icon type="highlight" />
                                 <span className="nav-text">ColorPicker</span>
@@ -1377,26 +1379,25 @@ class HomePage extends React.Component {
                                 </Menu.Item>
                             </SubMenu>
 
+                                    
                             <Menu.Item key="ReportBug" onClick={this.showReport} >
                                 <Icon type="bug" />
                                 <span className="nav-text">Report A Bug</span>
                             </Menu.Item>
+                            
 
                         </Menu>
                     </Sider>
                     <Layout style={{ marginLeft: this.state.collapsed? 80: 200 }}>
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
-     {switchword}
 
                             <div style={{ padding: 0, textAlign: 'left' }}>
-                                <div id="downloads">
-                                    <div>
-                                    <Statistic title="Characters" value={this.state.number_text} suffix="/ 5000" />
-                                    </div>
+                             
+                                   
                                     <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                                         {switchword}
                                     </div>
-                                </div>
+                            
 
                             </div>
                         </Content>
