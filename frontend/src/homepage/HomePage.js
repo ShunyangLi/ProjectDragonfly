@@ -529,9 +529,14 @@ class HomePage extends React.Component {
         var input = document.getElementById('words');
         html2canvas(input)
             .then((canvas) => {
-                var imgData = canvas.toDataURL('image/png');
+                const input = document.getElementById('words');
+                var theCSSprop = window.getComputedStyle(input, null).getPropertyValue("background-color");
+                // console.log(input.outerHTML);
                 var pdf = new jsPDF();
-                pdf.addImage(imgData, 'JPEG', 0, 0);
+                pdf.setFillColor(theCSSprop);
+                pdf.rect(0, 0, 240, 400, "F");
+                pdf.fromHTML(input.innerHTML);
+
                 pdf = btoa(pdf.output());
                 //console.log(pdf)
                 // send to backend
@@ -668,14 +673,15 @@ class HomePage extends React.Component {
     // this is handle download
     handleDownload = () => {
         // make the inout firstly
-        var input = document.getElementById('words');
-        html2canvas(input)
-            .then((canvas) => {
-                var imgData = canvas.toDataURL('image/png');
-                var pdf = new jsPDF();
-                pdf.addImage(imgData, 'JPEG', 0, 0);
-                pdf.save("download.pdf");
-            });
+        const input = document.getElementById('words');
+        var theCSSprop = window.getComputedStyle(input, null).getPropertyValue("background-color");
+        // console.log(input.outerHTML);
+        var pdf = new jsPDF();
+        pdf.setFillColor(theCSSprop);
+        pdf.rect(0, 0, 240, 400, "F");
+        pdf.fromHTML(input.innerHTML);
+        pdf.save('download.pdf');
+
     };
 
     // TODO this is try to handle paste
@@ -1367,8 +1373,10 @@ class HomePage extends React.Component {
                     <Layout style={{ marginLeft: 100 }}>
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
                             <div style={{ padding: 24, textAlign: 'left' }}>
-                                <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
-                                    {switchword}
+                                <div id="downloads">
+                                    <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+                                        {switchword}
+                                    </div>
                                 </div>
 
                             </div>
