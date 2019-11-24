@@ -822,14 +822,14 @@ class HomePage extends React.Component {
             lighttheme: !this.state.lighttheme
         });
 
-        if (document.getElementById('words').className === "word_container") {
+        if (document.getElementById('words').className === "word_container") { //white
             document.getElementById('words').className = "word_container2";
             this.setState({
-                custom: {
+                black: {
                     color: {
-                        r: '255',
-                        b: '255',
-                        g: '255',
+                        r: '0',
+                        b: '0',
+                        g: '0',
                         a: '1'
                     }
                 }
@@ -838,7 +838,7 @@ class HomePage extends React.Component {
         else {
             document.getElementById('words').className = "word_container";
             this.setState({
-                custom: {
+                black: {
                     color: {
                         r: '0',
                         b: '0',
