@@ -28,7 +28,7 @@ class HomePage extends React.Component {
         this.state = {
             id: 1,
             res: [],
-            text_input: "",
+            text_input: "This is an English Syntax Highlighter.\n It uses Natural Language Proccessing to determine the part of speech. \n It works with tricky sentences as well: \n The man with a saw saw a saw.",
             email: "",
             remove_switchword: false,
             language: "english",
@@ -1364,9 +1364,9 @@ class HomePage extends React.Component {
 
                         </Menu>
                     </Sider>
-                    <Layout style={{ marginLeft: 100 }}>
+                    <Layout style={{ marginLeft: this.state.collapsed? 80: 200 }}>
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
-                            <div style={{ padding: 24, textAlign: 'left' }}>
+                            <div style={{ padding: 0, textAlign: 'left' }}>
                                 <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
                                     {switchword}
                                 </div>

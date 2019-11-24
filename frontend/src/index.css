@@ -11,13 +11,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
 /* the word container */
 .word_container {
-  width: 63%;
+  width: 100%;
   font-family: monospace;
   background: #FFFFFF;
-  margin-left: 22%;
   padding: 15px;
   color: #000000;
   white-space: pre-wrap;
@@ -27,15 +25,14 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 1200PX;
+  height: 780px;
   overflow-y: auto;
 }
 
 .word_container2 {
-  width: 63%;
+  width: 100%;
   font-family: monospace;
   background: #001529;
-  margin-left: 22%;
   padding: 15px;
   color: #f2f0ec;
   white-space: pre-wrap;
@@ -45,10 +42,6 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 1200px;
+  height: 850px;
   overflow-y: auto;
 }
-
-
-
-
