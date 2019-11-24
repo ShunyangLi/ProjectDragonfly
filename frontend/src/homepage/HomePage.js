@@ -1257,7 +1257,7 @@ class HomePage extends React.Component {
                             <Modal
                                 title="Please report issues here"
                                 visible={this.state.reportText}
-                                onOK={this.handleCloseText}
+                                onOk={this.handleCloseText}
                                 onCancel={this.handleCloseText}
                             >
 
@@ -1321,7 +1321,7 @@ class HomePage extends React.Component {
                             >
 
                                 <Input name = "email" value = {this.state.email} onChange={this.handleEmailChange.bind(this)} />
-                                <Button onClick={this.sendEmail}>Send</Button>
+                                <Button style={{ marginTop: '2%', marginBottom: '2%', width: '150px' }}  size={"small"} onClick={this.sendEmail}>Send</Button>
                             </Modal>
 
                             <Menu.Item key="email" onClick={this.handleOpenEmail} >
