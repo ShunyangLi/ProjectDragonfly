@@ -1098,7 +1098,7 @@ class HomePage extends React.Component {
                             <Modal title="Color Picker"
                                 visible={this.state.colorpicker}
                                 onCancel={this.handleClosePicker}
-                                onOkay={this.handleClosePicker}> <div>
+                                onOk={this.handleClosePicker}> <div>
                                     <div style={styles.swatch} onClick={this.handleClick}>
                                         <div style={styles.adverb} id="adverb" />
                                     </div>
@@ -1316,7 +1316,7 @@ class HomePage extends React.Component {
                             <Modal
                                 title="Send Email to"
                                 visible={this.state.emailvisible}
-                                onOK={this.handleCloseEmail}
+                                onOk={this.handleCloseEmail}
                                 onCancel={this.handleCloseEmail}
                             >
 
