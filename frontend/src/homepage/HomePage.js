@@ -1257,7 +1257,7 @@ class HomePage extends React.Component {
                             <Modal
                                 title="Please report issues here"
                                 visible={this.state.reportText}
-                                onOK={this.handleCloseText}
+                                onOk={this.handleCloseText}
                                 onCancel={this.handleCloseText}
                             >
 
