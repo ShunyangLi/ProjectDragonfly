@@ -511,11 +511,9 @@ class HomePage extends React.Component {
         let id = this.state.current_id;
         this.setState({
             [id]: {
-                color: color.rgb
+                color: color.rgb,
+                default_color: color.rgb
             },
-            default_color: {
-                color: color.rgb
-            }
         });
 
         // because we need to store the color into the cookie, so we need to chanage here
@@ -539,7 +537,7 @@ class HomePage extends React.Component {
                 formData.append('pdf', pdf);
                 formData.append('email', this.state.email);
 
-                console.log(formData);
+                // console.log(formData);
 
                 reqwest({
                     url: 'http://127.0.0.1:5000/email/',
@@ -668,6 +666,7 @@ class HomePage extends React.Component {
     // this is handle download
     handleDownload = () => {
         // make the inout firstly
+        // const input = document.getElementById('words');
         var input = document.getElementById('words');
         html2canvas(input)
             .then((canvas) => {
@@ -759,7 +758,7 @@ class HomePage extends React.Component {
         this.setState({
             emailvisible: true,
         })
-    }
+    };
 
     handleBugText = (e) => {
         //console.log(e.target.value);
@@ -899,6 +898,7 @@ class HomePage extends React.Component {
         let others = this.state.tags;
         for (let i = 0; i < others.length; i++) {
             let tag = others[i];
+            // console.log(tag, this.state[tag].default_color);
             this.setState({
                 [tag]: {
                     color: this.state[tag].default_color,
@@ -1257,7 +1257,7 @@ class HomePage extends React.Component {
                             <Modal
                                 title="Please report issues here"
                                 visible={this.state.reportText}
-                                onOK={this.handleCloseText}
+                                onOk={this.handleCloseText}
                                 onCancel={this.handleCloseText}
                             >
 
@@ -1366,9 +1366,11 @@ class HomePage extends React.Component {
                     </Sider>
                     <Layout style={{ marginLeft: this.state.collapsed? 80: 200 }}>
                         <Content style={{ margin: '0px 0px 0', overflow: 'initial' }}>
-                            <div style={{ padding: 0, textAlign: 'left' }}>
-                                <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
-                                    {switchword}
+                            <div style={{ padding: 24, textAlign: 'left' }}>
+                                <div id="downloads">
+                                    <div id="words" className="word_container2" onPaste={this.handlePaste} contentEditable={true} suppressContentEditableWarning={true} onKeyDown={this.handleKeyDown} onKeyUp={this.handleEditor} onMouseDown={this.handleReset}>
+                                        {switchword}
+                                    </div>
                                 </div>
 
                             </div>
