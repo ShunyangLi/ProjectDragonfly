@@ -204,9 +204,9 @@ class HomePage extends React.Component {
             },
             black: {
                 color: {
-                    r: '169',
-                    g: '169',
-                    b: '169',
+                    r: '255',
+                    g: '255',
+                    b: '255',
                     a: '1'
                 },
             },
@@ -824,9 +824,29 @@ class HomePage extends React.Component {
 
         if (document.getElementById('words').className === "word_container") {
             document.getElementById('words').className = "word_container2";
+            this.setState({
+                custom: {
+                    color: {
+                        r: '255',
+                        b: '255',
+                        g: '255',
+                        a: '1'
+                    }
+                }
+            });
         }
         else {
             document.getElementById('words').className = "word_container";
+            this.setState({
+                custom: {
+                    color: {
+                        r: '0',
+                        b: '0',
+                        g: '0',
+                        a: '1'
+                    }
+                }
+            });
         }
     };
 
