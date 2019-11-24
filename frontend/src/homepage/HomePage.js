@@ -232,7 +232,7 @@ class HomePage extends React.Component {
 
             tags: ['adverb', 'noun', 'adposition', 'determiner', 'interjection', 'particle', 'punctuation', 'verb', 'unknown', 'conjunction', 'adjective'],
             custom_tag: 'adverb',
-            collapsed: true,
+            collapsed: false,
             colorpicker: false,
             lighttheme: false,
 
@@ -1294,6 +1294,9 @@ class HomePage extends React.Component {
                                     {uploading ? 'Uploading' : 'Start Upload'}
                                 </Button>
                             </Modal>
+
+
+                            
 
                             <SubMenu key="email" onClick={this.sendEmail} title={
                                 <span>
