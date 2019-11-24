@@ -525,8 +525,8 @@ class HomePage extends React.Component {
     };
 
     sendEmail = () => {
+        console.log(this.state.email);
         var input = document.getElementById('words');
-        this.handleCloseEmail();
         html2canvas(input)
             .then((canvas) => {
                 var imgData = canvas.toDataURL('image/png');
@@ -552,9 +552,11 @@ class HomePage extends React.Component {
                     success: (res) => {
                         //console.log(res);
                         message.success('Email was sent!');
+                        this.handleCloseEmail();
                     },
                     error: () => {
                         message.error('Email failed');
+                        this.handleCloseEmail();
                     },
                 });
             });
@@ -1314,12 +1316,12 @@ class HomePage extends React.Component {
                             <Modal
                                 title="Send Email to"
                                 visible={this.state.emailvisible}
-                                onOK={this.sendEmail}
+                                onOK={this.handleCloseEmail}
                                 onCancel={this.handleCloseEmail}
                             >
 
                                 <Input name = "email" value = {this.state.email} onChange={this.handleEmailChange.bind(this)} />
-
+                                <Button onClick={this.sendEmail}>Send</Button>
                             </Modal>
 
                             <Menu.Item key="email" onClick={this.handleOpenEmail} >
