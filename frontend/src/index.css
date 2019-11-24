@@ -16,8 +16,9 @@ code {
   width: 63%;
   font-family: monospace;
   background: #FFFFFF;
-  margin-left: 22%;
-  padding: 15px;
+
+  font-size: 30;
+  padding: 30px;
   color: #000000;
   white-space: pre-wrap;
   line-height: 1.4em;
@@ -26,16 +27,18 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 1200PX;
+
+  height: 100vh;
   overflow-y: auto;
 }
 
 .word_container2 {
   width: 63%;
   font-family: monospace;
+  font-size: 30;
   background: #001529;
-  margin-left: 22%;
-  padding: 15px;
+
+  padding: 30px;
   color: #f2f0ec;
   white-space: pre-wrap;
   line-height: 1.4em;
@@ -44,6 +47,6 @@ code {
   box-sizing: border-box;
   display: inline-block;
   contentEditable: true;
-  height: 1200px;
+  height: 100vh;
   overflow-y: auto;
 }
