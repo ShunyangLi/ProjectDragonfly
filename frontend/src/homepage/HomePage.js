@@ -827,9 +827,9 @@ class HomePage extends React.Component {
             this.setState({
                 black: {
                     color: {
-                        r: '0',
-                        b: '0',
-                        g: '0',
+                        r: '255',
+                        b: '255',
+                        g: '255',
                         a: '1'
                     }
                 }
